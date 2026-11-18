@@ -1,0 +1,49 @@
+h1. Урок 1. Введение в систему — СПР РБ1
+
+{info}Онбординг ФС: паспорт, команда СПР РБ, границы ответственности, путь заявки 1–14 по карте взаимодействий. КОТ СПР — отдельный урок.{info}
+
+----
+
+h2. Паспорт системы
+
+СПР РБ1 — контур первички розницы («7 полей»).
+
+*Продукты:* CCSA 100% (OCRM/ACRMNBA/RIBEYE/FEN_RIBEYE) · AUTO 100% (FLECS/FENIX_AL) · PILO 5% (FENIX)
+
+h3. Команда СПР РБ
+* ФС: Марченко → Филиппов → Гриценко → Кочетков
+* DevOps: Ананьев → Банаев → Гриценко → Кочетков
+* Развитие: Пустовалов, Тюляпкина → Староверов → Чурсин
+* Риск-технологи: технологи → Белобородова → Шиляев
+
+h3. Полезные ссылки
+* [СПР РБ1|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2842937663]
+* [СПР · эскалация|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1196788570]
+* [request_id|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2201317754]
+* [Бизнес-процесс|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2190431267]
+* [Мониторинг|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2548964951]
+* [Скрипты|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3303104621]
+* [Логирование ошибок|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2394156922]
+* [Адреса сред|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3474393190]
+* [Jira SPRRB|https://jira.moscow.alfaintra.net/browse/SPRRB]
+
+----
+
+h2. Границы ответственности ФС СПР РБ
+
+# Жизненный цикл заявки: приём, request_id, скоринг, решение Accept/Decline/TechnicalError/Error
+# Оркестрация источников: EQ, CR/БКИ, CD, СИМ, ЦП, GS, AFS/IFPS, MDM + маркеры TIMEOUT/ERROR
+# Диагностика: rm_*/ifps_*/cr_*/cd_*, Kibana 7frb-apps, Tempo, Grafana
+# Эскалация: команда СПР РБ + карта коммуникаций
+
+{warning}СПР РБ ≠ СПР ММБ. UI фронта — не наша зона. Падение чужого сервиса — к владельцу, факт фиксируем у себя.{warning}
+
+----
+
+h2. Путь заявки (карта взаимодействий)
+
+*Фронты 1:* ЕКК/Flecs/ЕМК/Fenix, OCRM → ApiFacade ({{rm_req_log}})
+*Ядро:* ApiFacade → Internal Kafka → MainProcess → ExtInf (+ Keycloak, PG, Redis)
+*Источники 2–10:* EQ · MDM · CD · SM · РИНТ · ЦП · СИМ · CredReg · IFPS
+*Результат 11–14:* фронт · CD Event · CredReg-BKI · RINT→WSRM
+*Платформа:* Kafka · MQ · IIB · Keycloak · PostgreSQL · Redis

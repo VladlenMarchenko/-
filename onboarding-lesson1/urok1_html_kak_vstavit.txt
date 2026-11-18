@@ -1,0 +1,1 @@
+Урок 1 v2 (СПР РБ1). Вставка: Confluence → HTML macro → вставить весь urok1_vvedenie_spr_rb.html. Wiki: urok1_vvedenie_spr_rb_confluence.txt через «Разметка».

@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Урок 1 — Введение в систему · СПР РБ1</title>
+<style>
+  :root {
+    --alfa: #EF3124;
+    --alfa-dark: #C41A12;
+    --ink: #1A1A1A;
+    --muted: #5C6570;
+    --line: #E2E5EA;
+    --bg: #F3F5F7;
+    --card: #FFFFFF;
+    --ok: #1B7A4E;
+    --warn: #9A5B00;
+    --info: #0B5CAB;
+    --radius: 12px;
+    --shadow: 0 8px 28px rgba(26, 26, 26, .08);
+    --font: "Trebuchet MS", "Segoe UI", "Helvetica Neue", sans-serif;
+    --display: Cambria, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 500px at 10% -10%, rgba(239,49,36,.10), transparent 55%),
+      radial-gradient(900px 400px at 100% 0%, rgba(11,92,171,.08), transparent 50%),
+      linear-gradient(180deg, #EEF1F4 0%, var(--bg) 40%, #EBEEF2 100%);
+    line-height: 1.45;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 20px 16px 64px; }
+  .hero {
+    position: relative; overflow: hidden; border-radius: 18px;
+    background: linear-gradient(135deg, #1A1A1A 0%, #2B3038 55%, #3A1512 100%);
+    color: #fff; padding: 28px 28px 24px; box-shadow: var(--shadow); margin-bottom: 18px;
+  }
+  .hero::after {
+    content: ""; position: absolute; right: -40px; top: -40px; width: 220px; height: 220px;
+    border-radius: 50%; background: radial-gradient(circle, rgba(239,49,36,.55), transparent 70%); pointer-events: none;
+  }
+  .eyebrow { display: inline-block; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.72); margin-bottom: 8px; }
+  .hero h1 { font-family: var(--display); font-size: clamp(28px, 4vw, 40px); font-weight: 700; margin: 0 0 8px; letter-spacing: -.02em; position: relative; z-index: 1; }
+  .hero .brand { color: #fff; border-bottom: 3px solid var(--alfa); padding-bottom: 2px; }
+  .hero p { margin: 0; max-width: 68ch; color: rgba(255,255,255,.82); font-size: 15px; position: relative; z-index: 1; }
+  .dl-row { margin-top: 12px; position: relative; z-index: 1; }
+  .dl-row a {
+    display: inline-block; text-decoration: none; font-weight: 700; font-size: 13px;
+    padding: 10px 14px; border-radius: 10px; margin: 0 8px 8px 0;
+  }
+  .dl-row a.main { background: #EF3124; color: #fff; }
+  .dl-row a.sec { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+  .progress-box { margin-top: 18px; position: relative; z-index: 1; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 12px; color: rgba(255,255,255,.7); margin-bottom: 6px; }
+  .bar { height: 8px; background: rgba(255,255,255,.15); border-radius: 99px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--alfa), #FF7A70); border-radius: 99px; transition: width .35s ease; }
+  .layout { display: grid; grid-template-columns: 220px 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } .nav { position: static !important; } }
+  .nav { position: sticky; top: 12px; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; box-shadow: var(--shadow); }
+  .nav button { display: block; width: 100%; text-align: left; border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px; padding: 9px 10px; border-radius: 8px; cursor: pointer; margin-bottom: 2px; }
+  .nav button:hover { background: #F6F7F9; color: var(--ink); }
+  .nav button.active { background: rgba(239,49,36,.08); color: var(--alfa-dark); font-weight: 700; }
+  .nav button .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--line); margin-right: 8px; vertical-align: middle; }
+  .nav button.done .dot { background: var(--ok); }
+  .nav button.active .dot { background: var(--alfa); }
+  .main { min-width: 0; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 22px 18px; box-shadow: var(--shadow); margin-bottom: 14px; display: none; }
+  .card.show { display: block; animation: in .28s ease; }
+  @keyframes in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .card h2 { font-family: var(--display); font-size: 26px; margin: 0 0 6px; letter-spacing: -.02em; }
+  .card .lead { color: var(--muted); margin: 0 0 16px; font-size: 14px; }
+  h3 { font-size: 15px; margin: 18px 0 8px; }
+  p { margin: 0 0 10px; font-size: 14px; }
+  ul, ol { margin: 0 0 12px; padding-left: 18px; font-size: 14px; }
+  li { margin-bottom: 5px; }
+  a { color: var(--info); }
+  .pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
+  .pill { font-size: 12px; padding: 6px 10px; border-radius: 999px; background: #F3F5F7; border: 1px solid var(--line); color: var(--muted); }
+  .pill.red { background: rgba(239,49,36,.08); border-color: rgba(239,49,36,.25); color: var(--alfa-dark); }
+  .callout { border-left: 4px solid var(--alfa); background: #FFF8F7; padding: 12px 14px; border-radius: 0 10px 10px 0; margin: 12px 0; font-size: 14px; }
+  .callout.info { border-color: var(--info); background: #F3F8FD; }
+  .callout.warn { border-color: var(--warn); background: #FFF8EC; }
+  .callout.ok { border-color: var(--ok); background: #F1FAF5; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0 14px; }
+  th, td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: #F7F8FA; font-weight: 700; }
+  code, .mono { font-family: Consolas, "Courier New", monospace; font-size: 12.5px; background: #F3F5F7; padding: 1px 5px; border-radius: 4px; }
+  .flow { display: grid; gap: 8px; margin: 12px 0; }
+  .flow-step { display: grid; grid-template-columns: 36px 1fr; gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: linear-gradient(90deg, #FAFBFC, #fff); }
+  .flow-step b { display: inline-flex; width: 28px; height: 28px; align-items: center; justify-content: center; border-radius: 50%; background: var(--ink); color: #fff; font-size: 12px; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .btn { border: 0; border-radius: 10px; padding: 10px 14px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn.primary { background: var(--alfa); color: #fff; }
+  .btn.primary:hover { background: var(--alfa-dark); }
+  .btn.ghost { background: #fff; border: 1px solid var(--line); color: var(--ink); }
+  .btn.ghost:hover { background: #F6F7F9; }
+  .tabs { display: flex; gap: 6px; margin: 0 0 12px; flex-wrap: wrap; }
+  .tabs button { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 8px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .tabs button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .pane { display: none; }
+  .pane.on { display: block; }
+  .check-item { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .check-item:last-child { border-bottom: 0; }
+  .check-item input { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--alfa); }
+  .check-item .meta { color: var(--muted); font-size: 12px; margin-top: 2px; word-break: break-word; }
+  .quiz-q { border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin-bottom: 10px; background: #FAFBFC; }
+  .quiz-q h4 { margin: 0 0 10px; font-size: 14px; }
+  .quiz-q label { display: block; padding: 8px 10px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; margin-bottom: 4px; font-size: 13px; }
+  .quiz-q label:hover { background: #fff; border-color: var(--line); }
+  .quiz-q label.correct { background: #EAF7F0; border-color: #B7E0C7; color: var(--ok); }
+  .quiz-q label.wrong { background: #FDECEC; border-color: #F5C2C0; color: var(--alfa-dark); }
+  .score { display: none; margin-top: 12px; padding: 14px; border-radius: 10px; background: #1A1A1A; color: #fff; font-size: 14px; }
+  .score.show { display: block; }
+  .links a { display: inline-block; margin: 0 8px 8px 0; padding: 7px 10px; border-radius: 8px; background: #F3F5F7; border: 1px solid var(--line); text-decoration: none; font-size: 12px; color: var(--ink); }
+  .links a:hover { border-color: #C9CED6; }
+  .footer-note { margin-top: 10px; font-size: 12px; color: var(--muted); text-align: center; }
+  .contact { padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .contact:last-child { border-bottom: 0; }
+  .contact .role { color: var(--muted); font-size: 12px; }
+
+  .link-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0 18px; }
+  @media (max-width: 700px) { .link-grid { grid-template-columns: 1fr; } }
+  .link-card {
+    display: block; text-decoration: none; color: inherit;
+    border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+    background: linear-gradient(180deg, #fff, #F8FAFC);
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .link-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(26,26,26,.08); border-color: #C9CED6; }
+  .link-card .tag {
+    display: inline-block; font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .link-card strong { display: block; font-size: 13px; margin-bottom: 2px; color: var(--ink); }
+  .link-card span.desc { font-size: 12px; color: var(--muted); }
+  .team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 10px 0 14px; }
+  @media (max-width: 700px) { .team-grid { grid-template-columns: 1fr; } }
+  .team-card {
+    border: 1px solid #D6E4FF; border-radius: 12px; padding: 12px 14px;
+    background: linear-gradient(160deg, #F5F9FF, #fff);
+    border-top: 3px solid #0052CC;
+  }
+  .team-card h4 { margin: 0 0 4px; font-size: 13px; color: #0052CC; }
+  .team-card .sub { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .team-card ol { margin: 0; padding-left: 18px; font-size: 12.5px; }
+  .team-card li { margin-bottom: 3px; }
+  .duty-grid { display: grid; gap: 10px; margin: 12px 0; }
+  .duty {
+    display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start;
+    border: 1px solid var(--line); border-radius: 14px; padding: 14px;
+    background: #fff;
+  }
+  .duty .num {
+    width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: #fff; font-size: 15px;
+  }
+  .duty h4 { margin: 0 0 4px; font-size: 14px; }
+  .duty p { margin: 0; font-size: 13px; color: #3A4450; }
+  .d1 .num { background: #0052CC; }
+  .d2 .num { background: #FF8B00; }
+  .d3 .num { background: #00875A; }
+  .d4 .num { background: #6554C0; }
+  .d1 { border-left: 4px solid #0052CC; }
+  .d2 { border-left: 4px solid #FF8B00; }
+  .d3 { border-left: 4px solid #00875A; }
+  .d4 { border-left: 4px solid #6554C0; }
+  .imap {
+    border: 1px solid #D0D7E2; border-radius: 14px; overflow: hidden;
+    background: #F7F9FC; margin: 10px 0 14px;
+  }
+  .imap-legend {
+    display: flex; flex-wrap: wrap; gap: 12px; padding: 10px 12px;
+    background: #fff; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted);
+  }
+  .imap-legend i {
+    display: inline-block; width: 22px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px;
+  }
+  .imap-legend .sync { background: #172B4D; }
+  .imap-legend .async { background: repeating-linear-gradient(90deg,#172B4D 0 4px, transparent 4px 7px); height: 2px; }
+  .imap-body {
+    display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px; padding: 10px;
+  }
+  @media (max-width: 900px) { .imap-body { grid-template-columns: 1fr; } }
+  .imap-col {
+    border-radius: 12px; padding: 10px; border: 1px solid transparent; min-height: 100px;
+  }
+  .imap-col.front { background: #E3FCEF; border-color: #ABF5D1; }
+  .imap-col.core { background: #DEEBFF; border-color: #B3D4FF; }
+  .imap-col.src { background: #FFF0B3; border-color: #FFE380; }
+  .imap-col h4 {
+    margin: 0 0 8px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  }
+  .imap-col.front h4 { color: #006644; }
+  .imap-col.core h4 { color: #0747A6; }
+  .imap-col.src h4 { color: #FF8B00; }
+  .imap-item {
+    background: #fff; border-radius: 10px; padding: 8px 9px; margin-bottom: 7px;
+    border: 1px solid rgba(0,0,0,.06); font-size: 12px; position: relative;
+  }
+  .imap-item .nm { font-weight: 700; font-size: 12.5px; }
+  .imap-item .meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .imap-item .log {
+    display: inline-block; margin-top: 4px; font-family: Consolas, monospace; font-size: 10.5px;
+    background: #FFEBE6; color: #BF2600; padding: 1px 5px; border-radius: 4px;
+  }
+  .badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; padding: 0 5px; border-radius: 99px;
+    background: #172B4D; color: #fff; font-size: 10px; font-weight: 800; margin-right: 5px;
+  }
+  .badge.g { background: #00875A; }
+  .badge.o { background: #FF8B00; }
+  .badge.r { background: #DE350B; }
+  .badge.b { background: #0052CC; }
+  .chan {
+    float: right; font-size: 10px; color: var(--muted); background: #F4F5F7;
+    border-radius: 4px; padding: 1px 5px; margin-left: 4px;
+  }
+  .imap-out {
+    margin: 0 10px 10px; border-radius: 12px; padding: 10px;
+    background: #FFEBE6; border: 1px solid #FFBDAD;
+  }
+  .imap-out h4 { margin: 0 0 8px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #BF2600; }
+  .out-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+  @media (max-width: 900px) { .out-grid { grid-template-columns: 1fr 1fr; } }
+  .imap-plat {
+    margin: 0 10px 10px; border-radius: 12px; padding: 10px;
+    background: #EAE6FF; border: 1px solid #C0B6F2;
+  }
+  .imap-plat h4 { margin: 0 0 6px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #403294; }
+  .plat-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .plat-chip {
+    background: #fff; border: 1px solid #C0B6F2; border-radius: 8px;
+    padding: 5px 8px; font-size: 11px;
+  }
+  .imap-tip {
+    margin: 0 10px 10px; border-radius: 10px; padding: 10px 12px;
+    background: #FFFAE6; border: 1px solid #FFF0B3; font-size: 12px; color: #172B4D;
+  }
+  .prod-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
+  .prod {
+    flex: 1 1 160px; border-radius: 12px; padding: 12px; border: 1px solid var(--line);
+    background: #fff;
+  }
+  .prod .pct { float: right; font-weight: 800; color: var(--alfa); }
+  .prod .nm { font-weight: 700; font-size: 13px; }
+  .prod .sys { font-size: 12px; color: var(--muted); margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Онбординг · Урок 1 из 7 · CREDITRM + DATAFLOW</div>
+    <h1><span class="brand">СПР РБ1</span> — Введение в систему</h1>
+    <p>Контур первички розницы: команда СПР РБ, путь заявки по карте взаимодействий, инструменты дежурства и доступы.</p>
+    <div class="dl-row">
+      <a class="main" href="./urok1_vvedenie_spr_rb.html" download="urok1_vvedenie_spr_rb.html">Скачать HTML для Confluence</a>
+      <a class="sec" href="./urok1_vvedenie_spr_rb_confluence.txt" download="urok1_vvedenie_spr_rb_confluence.txt">Скачать wiki-версию</a>
+    </div>
+    <div class="progress-box">
+      <div class="progress-meta"><span>Прогресс урока</span><span id="pct">0%</span></div>
+      <div class="bar"><span id="bar"></span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="nav" id="nav" aria-label="Разделы урока"></nav>
+    <main class="main" id="main"></main>
+  </div>
+  <p class="footer-note">Урок 1 v4 · карта коммуникаций + карта взаимодействий · CREDITRM + DATAFLOW · прогресс в этом браузере</p>
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = "spr_rb1_lesson1_v4";
+  var state = load();
+
+  var sections = [
+    { id: "passport", title: "1. Паспорт" },
+    { id: "scope", title: "2. Границы" },
+    { id: "landscape", title: "3. Ландшафт" },
+    { id: "terms", title: "4. Понятия" },
+    { id: "flow", title: "5. Путь заявки" },
+    { id: "tools", title: "6. Инструменты" },
+    { id: "access", title: "7. Доступы" },
+    { id: "practice", title: "8. Практика" },
+    { id: "quiz", title: "9. Проверка" }
+  ];
+
+  var ACCESS_RB = [
+    ["pg", "PostgreSQL РБ1 (pgAdmin4)", "spr-dc1-pg01:5434, УЗ U_**** · SELECT * FROM rbprimary.rm_res_log WHERE evtime >= NOW() - INTERVAL '5 minutes'"],
+    ["elk", "ELK / Kibana", "http://a/kibana-prod · Data View app-spr-kube* · kubernetes.namespace_name: '7frb-apps'"],
+    ["grf", "Графана наша (РБ1)", "http://utekcrm/grafana/d/Na4LEe3Nk/spr-rb1?orgId=9"],
+    ["jdef", "Jira дефекты SPRRB", "https://jira.moscow.alfaintra.net/browse/SPRRB · Create → «Дефект промсреды»"],
+    ["jdepl", "Jira деплой RSKDEPLOY", "https://jira.moscow.alfaintra.net/browse/RSKDEPLOY (деплой-доступ уточнять у DevOps)"],
+    ["plat", "А-платформа", "https://platform/projects/"]
+  ];
+
+  var html = {};
+
+  html.passport = '\
+    <h2>Паспорт системы</h2>\
+    <p class="lead">СПР РБ1 — контур принятия решений по первичке розницы. Ниже — кто мы, какие продукты идут через нас, и ссылки, которые понадобятся по ходу урока.</p>\
+    <div class="pillrow">\
+      <span class="pill red">СПР РБ1</span>\
+      <span class="pill">Первичка розницы</span>\
+      <span class="pill">Онбординг ФС</span>\
+    </div>\
+    <div class="callout">Автоматизация рассмотрения кредитных заявок и расчёта первичных предложений: быстрее менять алгоритмы, меньше кредитных и операционных рисков.</div>\
+    <h3>Маршрутизация продуктов</h3>\
+    <div class="prod-pills">\
+      <div class="prod"><span class="pct">100%</span><div class="nm">CCSA · кредитная карта</div><div class="sys">OCRM · ACRMNBA · RIBEYE · FEN_RIBEYE</div></div>\
+      <div class="prod"><span class="pct">100%</span><div class="nm">AUTO · автокредит</div><div class="sys">FLECS · FENIX_AL</div></div>\
+      <div class="prod"><span class="pct">5%</span><div class="nm">PILO · нецелевой КН</div><div class="sys">FENIX</div></div>\
+    </div>\
+    <h3>Команда СПР РБ</h3>\
+    <p style="color:#5C6570;font-size:13px;margin-top:-4px">Из карты коммуникаций — начинай отсюда.</p>\
+    <div class="team-grid">\
+      <div class="team-card"><h4>Функц. сопровождение</h4><div class="sub">1-я линия</div><ol><li>Марченко В. В. — эксперт</li><li>Филиппов А. И. — техлид</li><li>Гриценко Д. А. — рук. напр.</li><li>Кочетков Е. А. — нач. отдела</li></ol></div>\
+      <div class="team-card"><h4>DevOps</h4><div class="sub">стенды, БД, Redis</div><ol><li>Ананьев Д. Д. — эксперт</li><li>Банаев А. Н. — техлид</li><li>Гриценко Д. А.</li><li>Кочетков Е. А.</li></ol></div>\
+      <div class="team-card"><h4>Развитие</h4><div class="sub">доработки</div><ol><li>Пустовалов А. А. — разработчик</li><li>Тюляпкина В. С. — аналитик</li><li>Староверов Д. М. — техлид</li><li>Чурсин С. В. — ИТ-лидер</li></ol></div>\
+      <div class="team-card"><h4>Риск-технологи</h4><div class="sub">стратегии</div><ol><li>Золотухин, Немятых, Киселёва, Фастовский</li><li>Белобородова Е. А. — рук. напр.</li><li>Шиляев К. Н. — нач. отдела</li></ol></div>\
+    </div>\
+    <div class="callout info">Контакты смежных систем — на карте коммуникаций. Почта развития: spr-rbprimary-dev@alfaintra.net</div>\
+    <h3>Полезные ссылки по ходу урока</h3>\
+    <div class="link-grid">\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2842937663" target="_blank" rel="noopener"><div class="tag">Старт</div><strong>СПР РБ1 — корень ФС</strong><span class="desc">Контакты, продукты, вход в раздел</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1196788570" target="_blank" rel="noopener"><div class="tag">Эскалация</div><strong>СПР · рассылки и документы</strong><span class="desc">Админ-гайды, FSD, эскалация</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2201317754" target="_blank" rel="noopener"><div class="tag">Ключ поиска</div><strong>Формирование request_id</strong><span class="desc">UUIDv7 — главный идентификатор заявки</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2190431267" target="_blank" rel="noopener"><div class="tag">Процесс</div><strong>Бизнес-процесс</strong><span class="desc">PRH → PRB → PRV → POV</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2548964951" target="_blank" rel="noopener"><div class="tag">Дежурство</div><strong>Мониторинг ошибок</strong><span class="desc">Kibana · Tempo · Grafana</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3303104621" target="_blank" rel="noopener"><div class="tag">SQL</div><strong>Скрипты СПР РБ1</strong><span class="desc">Готовые запросы для разбора</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2394156922" target="_blank" rel="noopener"><div class="tag">Ошибки</div><strong>Логирование ошибок</strong><span class="desc">Маркеры TIMEOUT / ERROR</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3474393190" target="_blank" rel="noopener"><div class="tag">Среды</div><strong>Адреса СПР-РБ</strong><span class="desc">DEV / INT / LT / PROD</span></a>\
+      <a class="link-card" href="https://jira.moscow.alfaintra.net/browse/SPRRB" target="_blank" rel="noopener"><div class="tag">Тикеты</div><strong>Jira SPRRB</strong><span class="desc">Дефект промсреды</span></a>\
+      <a class="link-card" href="https://online-triggers-docs.spr-dev.alfaintra.net/" target="_blank" rel="noopener"><div class="tag">Портал</div><strong>Документация развития</strong><span class="desc">online-triggers-docs</span></a>\
+    </div>';
+
+  html.scope = '\
+    <h2>Границы ответственности</h2>\
+    <p class="lead">За что отвечает функциональное сопровождение СПР РБ — коротко и по делу.</p>\
+    <div class="duty-grid">\
+      <div class="duty d1"><div class="num">1</div><div><h4>Жизненный цикл заявки внутри СПР</h4><p>Приём, <span class="mono">request_id</span>, этапы скоринга, решение: <strong>Accept / Decline / TechnicalError / Error</strong>.</p></div></div>\
+      <div class="duty d2"><div class="num">2</div><div><h4>Оркестрация источников</h4><p>Вызовы EQ, Credit Registry (БКИ), CD, СИМ, ЦП, GlobalSearch, AFS/IFPS, MDM — контроль таймаутов и ошибок (маркеры <span class="mono">WS_TIMEOUT</span>/<span class="mono">WS_ERROR</span>, <span class="mono">_SEND_TIMEOUT</span> и т.д.).</p></div></div>\
+      <div class="duty d3"><div class="num">3</div><div><h4>Логирование и первичная диагностика</h4><p>Таблицы БД (<span class="mono">rm_req_log</span>/<span class="mono">rm_res_log</span>/<span class="mono">rm_gen_log</span>, <span class="mono">ifps_res_log</span>, <span class="mono">cr_res_log</span>, <span class="mono">cd_res_log</span>…), Kibana (namespace <span class="mono">7frb-apps</span>), <span class="mono">trace_id</span> через Grafana Tempo, дашборды Grafana.</p></div></div>\
+      <div class="duty d4"><div class="num">4</div><div><h4>Эскалация</h4><p>По цепочке «Команда СПР РБ» и карте коммуникаций — сначала своя линия, потом смежные системы.</p></div></div>\
+    </div>\
+    <div class="callout warn"><strong>Важно:</strong> явной таблицы «это не к нам» в Confluence нет. СПР РБ и СПР ММБ — разные контуры. Баги UI фронта — зона фронта; падение чужого сервиса — к владельцу, факт фиксируем у себя в логах.</div>\
+    <div class="callout info">КОТ СПР — отдельная система, в этом уроке не разбираем.</div>';
+
+  html.landscape = '\
+    <h2>Ландшафт</h2>\
+    <p class="lead">Картина «кто с кем» без детального разбора интеграций (Урок 2).</p>\
+    <table>\
+      <tr><th>Слой</th><th>Что запомнить</th></tr>\
+      <tr><td>Вход</td><td><span class="mono">spr-retail-primary-risks-api-facade</span> — валидация + Keycloak</td></tr>\
+      <tr><td>Runtime</td><td>SmartWay Connect, Decision Agent (Advisor), ETL Pentaho / Spark+Airflow, БД СПР</td></tr>\
+      <tr><td>Авторизация</td><td>Keycloak; Utility — кэш токенов для FENIX/IFPS</td></tr>\
+      <tr><td>Фронты</td><td>OCRM, ACRMNBA, RIBEYE (ЕМК), FEN_RIBEYE/FENIX (ЕКК), FLECS — по продуктам CCSA/AUTO/PILO</td></tr>\
+      <tr><td>Источники</td><td>EQ, CR/БКИ, CD (Kafka SPRRB_REQCD), СИМ, MDM, GS, AFS, IFPS, СОПД, ЦП, РИНТ, MSSQL RiskUR</td></tr>\
+      <tr><td>Платформы</td><td>Keycloak, Kafka, IBM MQ, Kubernetes, PostgreSQL (<span class="mono">rbprimary</span>)</td></tr>\
+    </table>\
+    <h3>Среды</h3>\
+    <table>\
+      <tr><th>Среда</th><th>ApiFacade</th><th>Статус</th></tr>\
+      <tr><td>ДЕВ</td><td>spr-dev…/secure/SPRRequest</td><td>Неактивный</td></tr>\
+      <tr><td>ИНТ</td><td>spr-int…/secure/SPRRequest</td><td>Активный</td></tr>\
+      <tr><td>ПРЕЛАЙВ / НТ</td><td>spr-lt1…/secure/SPRRequest</td><td>Активный (заглушки НТ)</td></tr>\
+      <tr><td>ПРОД</td><td>URL в «Адресах» пуст; хосты — из чек-листа</td><td>Боевой</td></tr>\
+    </table>\
+    <div class="callout warn">На проде: PostgreSQL <span class="mono">spr-dc1-pg01:5434</span> (РБ1). Деплой — Jira RSKDEPLOY + А-платформа, доступ уточнять у DevOps. Отдельного регламента PROD в Confluence нет.</div>\
+    <div class="links">\
+      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2137032204" target="_blank" rel="noopener">Общее описание</a>\
+      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3474393190" target="_blank" rel="noopener">Адреса сред</a>\
+      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2481672922" target="_blank" rel="noopener">Таблица интеграций</a>\
+    </div>';
+
+  html.terms = '\
+    <h2>Главные понятия</h2>\
+    <p class="lead">Слова, без которых нельзя читать логи и эскалировать.</p>\
+    <table>\
+      <tr><th>Термин</th><th>Смысл</th></tr>\
+      <tr><td><span class="mono">request_id</span></td><td>Главный ID заявки, UUIDv7. В Kibana — <span class="mono">requestId</span></td></tr>\
+      <tr><td>ApiFacade</td><td>Входная точка расчёта заявки</td></tr>\
+      <tr><td>Keycloak</td><td>Межсистемная аутентификация; 401/403 — сюда</td></tr>\
+      <tr><td>PRH / PRB / PRV / POV</td><td>Этапы конвейера стратегии</td></tr>\
+      <tr><td>CD / CR / EQ / ExtInf / IFPS</td><td>Кредитное досье · шлюз БКИ · АБС · внешние источники · антифрод</td></tr>\
+      <tr><td><span class="mono">rm_req_log</span> / <span class="mono">rm_res_log</span></td><td>Вход и выход заявки в БД СПР</td></tr>\
+      <tr><td><strong>Альт-режим</strong></td><td>Аварийно перестать «стучаться» в упавший сервис: очередь не растёт, скоринг дольше ждёт. Вкл/выкл сейчас = полный цикл выкатки</td></tr>\
+    </table>\
+    <div class="links">\
+      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2137032136" target="_blank" rel="noopener">Глоссарий</a>\
+      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2201317754" target="_blank" rel="noopener">request_id</a>\
+      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3119524533" target="_blank" rel="noopener">Альт-режим</a>\
+    </div>';
+
+  html.flow = '\
+    <h2>Путь заявки</h2>\
+    <p class="lead">Карта взаимодействий СПР РБ — как заявка проходит систему. Нумерация типовая; часть шагов зависит от стратегии и типа заявки.</p>\
+    <div class="imap">\
+      <div class="imap-legend">\
+        <span><i class="sync"></i>синхронно (HTTP / SOAP)</span>\
+        <span><i class="async"></i>асинхронно (Kafka / MQ)</span>\
+        <span>🔑 Keycloak-токен</span>\
+      </div>\
+      <div class="imap-body">\
+        <div class="imap-col front">\
+          <h4>Фронты</h4>\
+          <div class="imap-item"><span class="badge g">1</span><span class="nm">ЕКК · Flecs · ЕМК · Fenix</span><span class="chan">HTTPS</span><div class="meta">Запрос на скоринг через WSRM</div><span class="log">rm_req_log</span></div>\
+          <div class="imap-item"><span class="badge g">1</span><span class="nm">OCRM</span><span class="chan">HTTPS</span><div class="meta">Вторичные предложения</div><span class="log">rm_req_log</span></div>\
+          <div class="imap-item" style="margin-top:14px;border-style:dashed"><div class="nm" style="color:#006644">↓ Результат</div><div class="meta">шаги 11–14 ниже</div></div>\
+        </div>\
+        <div class="imap-col core">\
+          <h4>СПР РБ · ядро</h4>\
+          <div class="imap-item"><span class="badge b">●</span><span class="nm">ApiFacade</span><div class="meta">Вход, Keycloak, присвоение <span class="mono">request_id</span></div></div>\
+          <div class="imap-item"><span class="badge b">●</span><span class="nm">Internal Kafka</span><div class="meta">Сигнал «старт скоринга»</div></div>\
+          <div class="imap-item"><span class="badge b">●</span><span class="nm">MainProcess</span><div class="meta">Оркестрация · стратегия Adviser</div></div>\
+          <div class="imap-item"><span class="badge b">●</span><span class="nm">ExtInf</span><div class="meta">Вызовы онлайн-источников</div></div>\
+          <div class="imap-item"><span class="nm">Keycloak-service · Utility</span><div class="meta">Токены / кэш · логирование</div></div>\
+          <div class="imap-item"><span class="nm">PostgreSQL · Redis</span><div class="meta">Логи, параметры · async↔sync</div></div>\
+        </div>\
+        <div class="imap-col src">\
+          <h4>Источники данных</h4>\
+          <div class="imap-item"><span class="badge o">2</span><span class="nm">EQ</span><span class="chan">SOAP</span><div class="meta">EQ_ID + ФИО</div><span class="log">svcusinf_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">3</span><span class="nm">MDM</span><span class="chan">SOAP</span><div class="meta">Золотой профиль</div><span class="log">mdm_res_log</span></div>\
+          <div class="imap-item"><span class="badge o">4</span><span class="nm">CD</span><span class="chan">Kafka 🔑</span><div class="meta">Кредитное досье</div><span class="log">cd_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">5</span><span class="nm">SM</span><span class="chan">HTTP</span><div class="meta">PRH→PRB→PRV→POV</div><span class="log">sm_req/res_log</span></div>\
+          <div class="imap-item"><span class="badge o">6</span><span class="nm">РИНТ / ExtInf</span><span class="chan">ExtInf</span><div class="meta">БКИ, ОКБ, телеком</div><span class="log">extinf_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">7</span><span class="nm">ЦП</span><span class="chan">HTTP 🔑</span><div class="meta">Цифровой профиль</div><span class="log">extinf_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">8</span><span class="nm">СИМ</span><span class="chan">Kafka</span><div class="meta">Скоры моделей</div><span class="log">extinf_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">9</span><span class="nm">CredReg</span><span class="chan">MQ</span><div class="meta">Кредитная история</div><span class="log">cr_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">10</span><span class="nm">IFPS · FPS/AFS/GS</span><span class="chan">IIB</span><div class="meta">Антифрод + callback</div><span class="log">ifps_req/s_log</span></div>\
+        </div>\
+      </div>\
+      <div class="imap-out">\
+        <h4>Результат · шаги 11–14</h4>\
+        <div class="out-grid">\
+          <div class="imap-item"><span class="badge r">11</span><span class="nm">Ответ фронту</span><span class="chan">HTTPS</span><div class="meta">Решение + статус</div><span class="log">rm_upt_log · rm_res_log</span></div>\
+          <div class="imap-item"><span class="badge r">12</span><span class="nm">CD</span><span class="chan">Kafka 🔑</span><div class="meta">Статус, Event, SBBS</div><span class="log">cd_event_log</span></div>\
+          <div class="imap-item"><span class="badge r">13</span><span class="nm">CredReg-BKI</span><span class="chan">MQ</span><div class="meta">БКИИнфо</div><span class="log">SPR_INFORMCD</span></div>\
+          <div class="imap-item"><span class="badge r">14</span><span class="nm">RINT → WSRM</span><span class="chan">Kafka</span><div class="meta">События по заявкам</div></div>\
+        </div>\
+      </div>\
+      <div class="imap-plat">\
+        <h4>Платформа · если упало «у всех»</h4>\
+        <div class="plat-row">\
+          <span class="plat-chip"><strong>Kafka</strong> CD · СИМ · EORMDB</span>\
+          <span class="plat-chip"><strong>MQ</strong> CredReg</span>\
+          <span class="plat-chip"><strong>IIB</strong> IFPS / FPS / AFS / GS</span>\
+          <span class="plat-chip"><strong>Keycloak</strong> токены</span>\
+          <span class="plat-chip"><strong>PostgreSQL</strong> логи</span>\
+          <span class="plat-chip"><strong>Redis</strong> async↔sync</span>\
+        </div>\
+      </div>\
+      <div class="imap-tip"><strong>Как разбирать:</strong> 1) есть ли запись в <span class="mono">rm_req_log</span> → 2) на каком шаге остановились → 3) маркер TIMEOUT/ERROR → 4) эскалация по карте коммуникаций.</div>\
+    </div>\
+    <div class="callout ok">Это учебная копия карты взаимодействий. Полная draw.io-версия — на странице Confluence ФС.</div>';
+
+  html.tools = '\
+    <h2>Инструменты ежедневной работы</h2>\
+    <p class="lead">Алгоритм разбора + дашборды + готовые SQL.</p>\
+    <ol>\
+      <li>Добудь <span class="mono">request_id</span> (пустой requestId в Kibana = ошибка приложения, не заявки)</li>\
+      <li><strong>Kibana</strong> — <span class="mono">app-spr-kube*</span>, namespace <span class="mono">7frb-apps</span></li>\
+      <li><span class="mono">trace_id</span> → Grafana Tempo (dc1/dc2)</li>\
+      <li>Дашборды Grafana (приоритетный — общебанковский spr-rb1)</li>\
+      <li>БД: <span class="mono">rm_req_log / rm_res_log / rm_gen_log</span> и дальше по шагу</li>\
+      <li>Дефект → Jira SPRRB («Дефект промсреды»)</li>\
+    </ol>\
+    <h3>Дашборды</h3>\
+    <div class="links">\
+      <a href="http://grafana-uis/d/int-rb-primary/spr-rb1?orgId=1" target="_blank" rel="noopener">★ Общебанк. spr-rb1</a>\
+      <a href="https://grafana.spr-dc1.alfaintra.net/d/9e4b0b4a-21db-4f8e-a6f3-5cbc8998194b/spr-rb1" target="_blank" rel="noopener">Grafana dc1</a>\
+      <a href="https://grafana.spr-dc2.alfaintra.net/d/9e4b0b4a-21db-4f8e-a6f3-5cbc8998194b/spr-rb1" target="_blank" rel="noopener">Grafana dc2</a>\
+      <a href="http://utekcrm/grafana/d/Na4LEe3Nk/spr-rb1?orgId=9" target="_blank" rel="noopener">Наша РБ1</a>\
+    </div>\
+    <h3>Скрипты дежурства (шпаргалка)</h3>\
+    <ul>\
+      <li>Входящие RIBEYE по TRIGGER_TYPE — <span class="mono">rm_req_log</span></li>\
+      <li>Ошибки IFPS — <span class="mono">ifps_res_log</span> JOIN <span class="mono">rm_gen_log</span></li>\
+      <li>Выход со скоринга за 5 мин — <span class="mono">rm_res_log</span></li>\
+      <li>Этапы заявки — <span class="mono">rm_gen_log</span> по <span class="mono">app_id</span></li>\
+      <li>Ответ CD — <span class="mono">cd_res_log</span>; офферы — <span class="mono">rm_offer_log</span>; ЦП — <span class="mono">digprof_res_log</span></li>\
+    </ul>\
+    <h3>Маркеры ошибок</h3>\
+    <table>\
+      <tr><th>Таблица</th><th>Искать</th></tr>\
+      <tr><td><span class="mono">extinfo_res_log</span></td><td>WS_TIMEOUT / WS_ERROR / DB_ERROR</td></tr>\
+      <tr><td><span class="mono">ifps_res_log</span></td><td>GS_/AFS_/BLACKLIST_/RSSS_/RSAS_ SEND_TIMEOUT|ERROR</td></tr>\
+      <tr><td><span class="mono">cr_res_log</span></td><td>CR_TIMEOUT / CR_ERROR</td></tr>\
+      <tr><td><span class="mono">cd_res_log</span></td><td>TIMEOUT / KAFKATIMEOUT</td></tr>\
+      <tr><td><span class="mono">sim_res_log</span> / <span class="mono">digprof_res_log</span></td><td>WS_ERROR / WS_TIMEOUT</td></tr>\
+    </table>\
+    <div class="callout info">Своя эскалация — по цепочке «Команда СПР РБ» (карта коммуникаций). DevOps: Ананьев Д. Д., Банаев А. Н. Runbook-страница заведена, но пока пустая.</div>\
+    <div class="links">\
+      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2548964951" target="_blank" rel="noopener">Мониторинг</a>\
+      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3303104621" target="_blank" rel="noopener">Скрипты СПР РБ1</a>\
+      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2394156922" target="_blank" rel="noopener">Логирование ошибок</a>\
+    </div>';
+
+  html.access = accessHtml();
+  html.practice = '\
+    <h2>Практика · 20 минут</h2>\
+    <p class="lead">Прогони чек-лист как перед первой сменой.</p>\
+    <ol>\
+      <li>Открой <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2842937663" target="_blank" rel="noopener">СПР РБ1</a> — в избранное</li>\
+      <li>Выучи цепочку «Команда СПР РБ»: ФС → DevOps → Развитие → Риск-технологи</li>\
+      <li>По карте взаимодействий назови шаги 1, 5, 11 и таблицы логов</li>\
+      <li>В pgAdmin: SELECT из <span class="mono">rbprimary.rm_res_log</span> за 5 минут</li>\
+      <li>В Kibana: namespace <span class="mono">7frb-apps</span> — логи видны</li>\
+      <li>Открой Grafana «наша РБ1» и общебанковский spr-rb1</li>\
+      <li>В Jira SPRRB проверь тип «Дефект промсреды»</li>\
+      <li>Учебный <span class="mono">request_id</span> → найди в <span class="mono">rm_gen_log</span> или Kibana</li>\
+      <li>Напиши наставнику: «Урок 1: доступы N/6, блокеры: …»</li>\
+    </ol>\
+    <div class="callout">Критерий «пройден»: объясняешь СПР РБ1 за минуту, знаешь команду СПР РБ, путь 1–14 по карте взаимодействий, проверил доступы РБ1, находишь заявку по request_id.</div>';
+
+  html.quiz = '\
+    <h2>Проверка знаний</h2>\
+    <p class="lead">Минимум 4/5 — урок засчитан.</p>\
+    <div class="quiz-q" data-q="0">\
+      <h4>1. Кто первая линия в «Команде СПР РБ»?</h4>\
+      <label><input type="radio" name="q0" value="0"/> Только риск-технологи</label>\
+      <label><input type="radio" name="q0" value="1"/> Функц. сопровождение: Марченко → Филиппов → Гриценко → Кочетков</label>\
+      <label><input type="radio" name="q0" value="2"/> Только INTKAFKA_SUPPORT</label>\
+    </div>\
+    <div class="quiz-q" data-q="1">\
+      <h4>2. Что такое request_id?</h4>\
+      <label><input type="radio" name="q1" value="0"/> Номер договора в EQ</label>\
+      <label><input type="radio" name="q1" value="1"/> Главный ID заявки в СПР (UUIDv7)</label>\
+      <label><input type="radio" name="q1" value="2"/> ID пода Kubernetes</label>\
+    </div>\
+    <div class="quiz-q" data-q="2">\
+      <h4>3. Как проверить доступ к логам РБ1 в PostgreSQL?</h4>\
+      <label><input type="radio" name="q2" value="0"/> Писать в чат «дайте логи»</label>\
+      <label><input type="radio" name="q2" value="1"/> pgAdmin → spr-dc1-pg01:5434 → SELECT из rbprimary.rm_res_log за 5 минут</label>\
+      <label><input type="radio" name="q2" value="2"/> Только MSSQL RiskUR</label>\
+    </div>\
+    <div class="quiz-q" data-q="3">\
+      <h4>4. Что на шаге 5 карты взаимодействий?</h4>\
+      <label><input type="radio" name="q3" value="0"/> Только ответ во фронт</label>\
+      <label><input type="radio" name="q3" value="1"/> SM: этапы PRH → PRB → PRV → POV, лог sm_req/res_log</label>\
+      <label><input type="radio" name="q3" value="2"/> Только MQ в CredReg-BKI</label>\
+    </div>\
+    <div class="quiz-q" data-q="4">\
+      <h4>5. Куда заводить дефект промсреды по РБ1?</h4>\
+      <label><input type="radio" name="q4" value="0"/> Только Telegram</label>\
+      <label><input type="radio" name="q4" value="1"/> Jira SPRRB, тип «Дефект промсреды»</label>\
+      <label><input type="radio" name="q4" value="2"/> Только RSKDEPLOY</label>\
+    </div>\
+    <div class="score" id="score"></div>';
+
+  var answers = [1, 1, 1, 1, 1];
+
+  function accessHtml() {
+    if (!state.checks) state.checks = {};
+    function rows(list, prefix) {
+      return list.map(function (it, i) {
+        var id = prefix + it[0];
+        var checked = state.checks[id] ? " checked" : "";
+        return '<label class="check-item"><input type="checkbox" data-check="' + id + '"' + checked + '/><div><strong>' + it[1] + '</strong><div class="meta">' + it[2] + '</div></div></label>';
+      }).join("");
+    }
+    return '\
+      <h2>Основные доступы</h2>\
+      <p class="lead">Чек-лист СПР РБ (без КОТ — его подключим отдельным уроком). Отметь, что уже проверил.</p>\
+      <div class="callout warn">В чек-листе есть «как проверить», но нет «как запросить». Деплой-доступ — у DevOps (Ананьев / Банаев).</div>\
+      <div id="checklist">' + rows(ACCESS_RB, "rb_") + '</div>\
+      <div class="callout info" id="accessSummary"></div>';
+  }
+
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") || {}; } catch (e) { return {}; }
+  }
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  function renderNav() {
+    document.getElementById("nav").innerHTML = sections.map(function (s) {
+      var done = (state.done || {})[s.id] ? " done" : "";
+      var active = state.current === s.id ? " active" : "";
+      return '<button type="button" class="' + done + active + '" data-go="' + s.id + '"><span class="dot"></span>' + s.title + "</button>";
+    }).join("");
+  }
+
+  function actionsHtml(id) {
+    var idx = sections.findIndex(function (s) { return s.id === id; });
+    var prev = idx > 0 ? sections[idx - 1].id : null;
+    var buttons = "";
+    if (prev) buttons += '<button type="button" class="btn ghost" data-go="' + prev + '">← Назад</button>';
+    if (id === "quiz") buttons += '<button type="button" class="btn primary" id="checkQuiz">Проверить ответы</button>';
+    else buttons += '<button type="button" class="btn primary" data-complete="' + id + '">Далее →</button>';
+    return '<div class="actions">' + buttons + "</div>";
+  }
+
+  function renderSection() {
+    var id = state.current || "passport";
+    state.current = id;
+    if (id === "access") html.access = accessHtml();
+    document.getElementById("main").innerHTML = '<section class="card show">' + html[id] + actionsHtml(id) + "</section>";
+    renderNav();
+    updateProgress();
+    updateAccessSummary();
+    bindCard();
+    save();
+  }
+
+  function bindCard() {
+    var root = document.getElementById("main");
+    root.querySelectorAll("[data-go]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.current = btn.getAttribute("data-go");
+        renderSection();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+    root.querySelectorAll("[data-complete]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var id = btn.getAttribute("data-complete");
+        state.done = state.done || {};
+        state.done[id] = true;
+        var idx = sections.findIndex(function (s) { return s.id === id; });
+        if (idx < sections.length - 1) state.current = sections[idx + 1].id;
+        renderSection();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+    root.querySelectorAll("[data-check]").forEach(function (box) {
+      box.addEventListener("change", function () {
+        state.checks = state.checks || {};
+        state.checks[box.getAttribute("data-check")] = box.checked;
+        save();
+        updateAccessSummary();
+        updateProgress();
+      });
+    });
+    root.querySelectorAll("[data-tab]").forEach(function (tab) {
+      tab.addEventListener("click", function () {
+        root.querySelectorAll("[data-tab]").forEach(function (t) { t.classList.remove("on"); });
+        root.querySelectorAll(".pane").forEach(function (p) { p.classList.remove("on"); });
+        tab.classList.add("on");
+        document.getElementById("pane-" + tab.getAttribute("data-tab")).classList.add("on");
+      });
+    });
+    var quizBtn = document.getElementById("checkQuiz");
+    if (quizBtn) quizBtn.addEventListener("click", checkQuiz);
+  }
+
+  function countChecks(prefix, n) {
+    var ok = 0;
+    if (!state.checks) return 0;
+    for (var k in state.checks) if (k.indexOf(prefix) === 0 && state.checks[k]) ok++;
+    return ok;
+  }
+
+  function updateAccessSummary() {
+    var el = document.getElementById("accessSummary");
+    if (!el) return;
+    var rb = countChecks("rb_", 6);
+    el.textContent = "Отмечено: " + rb + "/6. До дежурства закрой минимум: PG РБ1, ELK 7frb-apps, Grafana РБ1, Jira SPRRB.";
+  }
+
+  function updateProgress() {
+    var done = state.done || {};
+    var n = sections.filter(function (s) { return done[s.id]; }).length;
+    var checks = 0, total = ACCESS_RB.length;
+    if (state.checks) for (var k in state.checks) if (state.checks[k]) checks++;
+    var pct = Math.round((n / sections.length) * 75 + (checks / total) * 25);
+    if (done.quiz) pct = Math.max(pct, 100);
+    pct = Math.min(100, pct);
+    document.getElementById("pct").textContent = pct + "%";
+    document.getElementById("bar").style.width = pct + "%";
+  }
+
+  function checkQuiz() {
+    var score = 0;
+    document.querySelectorAll(".quiz-q").forEach(function (q) {
+      var qi = +q.getAttribute("data-q");
+      q.querySelectorAll("label").forEach(function (lab) {
+        lab.classList.remove("correct", "wrong");
+        var input = lab.querySelector("input");
+        var val = +input.value;
+        if (val === answers[qi]) lab.classList.add("correct");
+        if (input.checked && val !== answers[qi]) lab.classList.add("wrong");
+        if (input.checked && val === answers[qi]) score++;
+      });
+    });
+    var box = document.getElementById("score");
+    box.classList.add("show");
+    var pass = score >= 4;
+    box.innerHTML = pass
+      ? "<strong>Результат: " + score + "/5.</strong> Урок 1 пройден. Дальше — Урок 2. Интеграции."
+      : "<strong>Результат: " + score + "/5.</strong> Нужно минимум 4/5 — перечитай разделы и пересдай.";
+    if (pass) {
+      state.done = state.done || {};
+      state.done.quiz = true;
+      state.done.practice = true;
+      save();
+      updateProgress();
+      renderNav();
+    }
+  }
+
+  document.getElementById("nav").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-go]");
+    if (!btn) return;
+    state.current = btn.getAttribute("data-go");
+    renderSection();
+  });
+
+  if (!state.current) state.current = "passport";
+  renderSection();
+})();
+</script>
+</body>
+</html>
