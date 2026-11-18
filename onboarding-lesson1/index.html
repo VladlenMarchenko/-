@@ -128,7 +128,7 @@
   <header class="hero">
     <div class="eyebrow">Онбординг · Урок 1 из 7 · CREDITRM + DATAFLOW</div>
     <h1><span class="brand">СПР РБ1</span> — Введение в систему</h1>
-    <p>Контур первички розницы: что это, где границы, как идёт заявка, чем пользоваться на дежурстве и как проверить доступы по чек-листу ФС.</p>
+    <p>Контур первички розницы: команда СПР РБ, путь заявки по карте взаимодействий, инструменты дежурства и доступы.</p>
     <div class="dl-row">
       <a class="main" href="./urok1_vvedenie_spr_rb.html" download="urok1_vvedenie_spr_rb.html">Скачать HTML для Confluence</a>
       <a class="sec" href="./urok1_vvedenie_spr_rb_confluence.txt" download="urok1_vvedenie_spr_rb_confluence.txt">Скачать wiki-версию</a>
@@ -143,12 +143,12 @@
     <nav class="nav" id="nav" aria-label="Разделы урока"></nav>
     <main class="main" id="main"></main>
   </div>
-  <p class="footer-note">Урок 1 v2 · источники: CREDITRM (ФС) + DATAFLOW (ФТ) + чек-лист доступов СПР.xlsx · прогресс в этом браузере</p>
+  <p class="footer-note">Урок 1 v3 · карта коммуникаций + карта взаимодействий · CREDITRM + DATAFLOW · прогресс в этом браузере</p>
 </div>
 
 <script>
 (function () {
-  var STORAGE_KEY = "spr_rb1_lesson1_v2";
+  var STORAGE_KEY = "spr_rb1_lesson1_v3";
   var state = load();
 
   var sections = [
@@ -171,27 +171,15 @@
     ["jdepl", "Jira деплой RSKDEPLOY", "https://jira.moscow.alfaintra.net/browse/RSKDEPLOY (деплой-доступ уточнять у DevOps)"],
     ["plat", "А-платформа", "https://platform/projects/"]
   ];
-  var ACCESS_KOT = [
-    ["kpg", "БД триггеров КОТ", "spr-dc1-pg01:5432 · SELECT COUNT(*) FROM public.\"TriggersEMK\" WHERE \"CreationStamp\" > NOW() - INTERVAL '10 minutes'"],
-    ["kelk", "ELK КОТ", "kibana-prod · namespace online-triggers-spring"],
-    ["kgrf", "Графана СПР (kuber-custom)", "grafana.spr-dc1… namespace online-triggers-spring"],
-    ["kos", "Общебанк. Grafana Kafka", "osmonit-app · cluster=spr_prod"],
-    ["kmssql", "MSSQL RiskUR", "10.229.2.67:1433 riskmon · spr_checkstandby_log + OPENQUERY SPR_DC1/DC2"],
-    ["kour", "Графана наша (КОТ)", "http://utekcrm/grafana/d/Gk3cudmNz/spr-kot?orgId=9"],
-    ["kjdef", "Jira дефекты KOTSPR", "https://jira.moscow.alfaintra.net/browse/KOTSPR · «Дефект промсреды»"],
-    ["kjepl", "Jira деплой RSKDEPLOY", "как у РБ1"],
-    ["kplat", "А-платформа", "https://platform/projects/"]
-  ];
 
   var html = {};
 
   html.passport = '\
     <h2>Паспорт системы</h2>\
-    <p class="lead">СПР РБ1 — контур принятия решений по первичке розницы («7 полей») и триггерный контур КОТ.</p>\
+    <p class="lead">СПР РБ1 — контур принятия решений по первичке розницы («7 полей»).</p>\
     <div class="pillrow">\
       <span class="pill red">СПР РБ1</span>\
       <span class="pill">Первичка розницы</span>\
-      <span class="pill">КОТ / триггеры</span>\
       <span class="pill">CREDITRM = источник ФС</span>\
     </div>\
     <div class="callout">Назначение: автоматизация рассмотрения кредитных заявок и расчёта первичных предложений. Цель — быстрее и прозрачнее менять алгоритмы, снижая кредитные и операционные риски.</div>\
@@ -208,11 +196,16 @@
       <tr><td>AUTO — автокредит</td><td>FLECS, FENIX_AL</td><td>100%</td></tr>\
       <tr><td>PILO — нецелевой КН</td><td>FENIX</td><td>5%</td></tr>\
     </table>\
-    <h3>Контакты ФС (с чего начать)</h3>\
-    <div class="contact"><div class="role">Общая почта развития СПР РБ1</div><strong>spr-rbprimary-dev@alfaintra.net</strong></div>\
-    <div class="contact"><div class="role">Аналитик СПР РБ1</div><strong>Пустовалов Александр</strong> · APUSTOVALOV@ALFABANK.RU · +7 919 814-26-61</div>\
-    <div class="contact"><div class="role">Техлидер разработки</div><strong>Сазонтьев Владимир</strong> · VSazontyev@alfabank.ru</div>\
-    <div class="contact"><div class="role">DevOps</div><strong>risk_support_devops@alfabank.ru</strong> / OSSG_SPR · Ананьев Д., Банаев А.; эскалация — Таразанов А. (+7 985 545-48-89)</div>\
+    <h3>Команда СПР РБ</h3>\
+    <p style="color:#5C6570;font-size:13px;margin-top:-4px">Из карты коммуникаций — начинай отсюда при «своих» вопросах.</p>\
+    <table>\
+      <tr><th>Направление</th><th>Цепочка эскалации</th></tr>\
+      <tr><td><strong>Функц. сопровождение</strong><br/>1-я линия</td><td>① Марченко В. В. (эксперт) → ② Филиппов А. И. (техлид) → ③ Гриценко Д. А. (рук. напр.) → ④ Кочетков Е. А. (нач. отдела)</td></tr>\
+      <tr><td><strong>DevOps</strong><br/>стенды, БД, Redis</td><td>① Ананьев Д. Д. (эксперт) → ② Банаев А. Н. (техлид) → ③ Гриценко Д. А. → ④ Кочетков Е. А.</td></tr>\
+      <tr><td><strong>Развитие</strong><br/>доработки</td><td>① Пустовалов А. А. (разработчик), Тюляпкина В. С. (аналитик) → ② Староверов Д. М. (техлид) → ③ Чурсин С. В. (ИТ-лидер)</td></tr>\
+      <tr><td><strong>Риск-технологи</strong><br/>стратегии</td><td>① Золотухин Д. А., Немятых Н. Д., Киселёва К. В., Фастовский А. В. → ② Белобородова Е. А. (рук. напр.) → ③ Шиляев К. Н. (нач. отдела)</td></tr>\
+    </table>\
+    <div class="callout info">Контакты смежных систем (EQ, CD, SM, IFPS…) — на карте коммуникаций. Почта развития: spr-rbprimary-dev@alfaintra.net</div>\
     <div class="links">\
       <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2842937663" target="_blank" rel="noopener">Корень ФС · СПР РБ1</a>\
       <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1196788570" target="_blank" rel="noopener">СПР · рассылки и эскалация</a>\
@@ -222,12 +215,12 @@
   html.scope = '\
     <h2>Границы ответственности</h2>\
     <p class="lead">Что закрывает СПР РБ1 и чего от неё не ждать.</p>\
-    <div class="callout ok"><strong>В зоне СПР РБ1:</strong> скоринг первички розницы («7 полей»), триггерный контур КОТ; функционал, который забирается у WSRM/SBRM (распоряжения 3696.1, 5471.1).</div>\
+    <div class="callout ok"><strong>В зоне СПР РБ1:</strong> скоринг первички розницы («7 полей»); функционал, который забирается у WSRM/SBRM (распоряжения 3696.1, 5471.1). КОТ СПР — отдельная система, в этом уроке не разбираем.</div>\
     <ul>\
       <li>Приём заявки, <span class="mono">request_id</span>, прогон PRH→POV</li>\
       <li>Оркестрация источников и отдача решения во фронт</li>\
       <li>Логирование в БД СПР и первичная диагностика</li>\
-      <li>Эскалация по контактам CREDITRM / DevOps</li>\
+      <li>Эскалация по цепочке «Команда СПР РБ» и карте коммуникаций</li>\
     </ul>\
     <div class="callout warn">Явной таблицы «это не к нам» в Confluence нет. СПР РБ и СПР ММБ — разные контуры. Баги UI фронта — зона фронта; падение чужого сервиса — к владельцу, факт фиксируем у себя.</div>\
     <div class="callout info">Раздел ФС уже заведён (Обзор, карты, интеграции, Runbook, Onboarding), но страницы пока пустые — этот урок как раз наполняет онбординг.</div>';
@@ -252,7 +245,7 @@
       <tr><td>ПРЕЛАЙВ / НТ</td><td>spr-lt1…/secure/SPRRequest</td><td>Активный (заглушки НТ)</td></tr>\
       <tr><td>ПРОД</td><td>URL в «Адресах» пуст; хосты — из чек-листа</td><td>Боевой</td></tr>\
     </table>\
-    <div class="callout warn">На проде: PostgreSQL <span class="mono">spr-dc1-pg01:5434</span> (РБ1) и <span class="mono">:5432</span> (КОТ). Деплой — Jira RSKDEPLOY + А-платформа, доступ уточнять у DevOps. Отдельного регламента PROD в Confluence нет.</div>\
+    <div class="callout warn">На проде: PostgreSQL <span class="mono">spr-dc1-pg01:5434</span> (РБ1). Деплой — Jira RSKDEPLOY + А-платформа, доступ уточнять у DevOps. Отдельного регламента PROD в Confluence нет.</div>\
     <div class="links">\
       <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2137032204" target="_blank" rel="noopener">Общее описание</a>\
       <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3474393190" target="_blank" rel="noopener">Адреса сред</a>\
@@ -280,28 +273,50 @@
 
   html.flow = '\
     <h2>Путь заявки</h2>\
-    <p class="lead">Happy path из бизнес-процесса DATAFLOW.</p>\
-    <div class="flow">\
-      <div class="flow-step"><b>1</b><div><strong>Фронт → ApiFacade</strong><br/>Валидация, Keycloak, создаётся <span class="mono">request_id</span></div></div>\
-      <div class="flow-step"><b>2</b><div><strong>Начальный этап</strong><br/>Обогащение OCRM (если нужно), GlobalSearch</div></div>\
-      <div class="flow-step"><b>3</b><div><strong>PRH → PRB → PRV → POV</strong><br/>Стратегия: отказать / одобрить / доп. источники / дальше. Повторные вызовы — с блоком <span class="mono">BRESULTS</span></div></div>\
-      <div class="flow-step"><b>4</b><div><strong>Шаг 6 — во фронт</strong><br/>Результат отдан = заявка завершена (+ бизнес-правила, логи)</div></div>\
+    <p class="lead">По карте взаимодействий СПР РБ: типовой порядок шагов 1–14. Часть вызовов зависит от стратегии и типа заявки.</p>\
+    <div class="pillrow">\
+      <span class="pill">синхронно HTTP/SOAP</span>\
+      <span class="pill">асинхронно Kafka/MQ</span>\
+      <span class="pill red">Keycloak</span>\
     </div>\
-    <div class="callout ok">Отдельного статуса «принята» в доках нет — принятие = момент поступления от фронта.</div>\
-    <div class="links">\
-      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2190431267" target="_blank" rel="noopener">Бизнес-процесс</a>\
-    </div>';
+    <h3>Вход</h3>\
+    <div class="flow">\
+      <div class="flow-step"><b>1</b><div><strong>Фронты → ApiFacade</strong><br/>ЕКК · Flecs · ЕМК · Fenix (WSRM) / OCRM · HTTPS + Keycloak · <span class="mono">rm_req_log</span> · присваивается <span class="mono">request_id</span></div></div>\
+    </div>\
+    <h3>Обогащение и стратегия</h3>\
+    <div class="flow">\
+      <div class="flow-step"><b>2</b><div><strong>EQ</strong> — EQ_ID + ФИО · SOAP · <span class="mono">svcusinf_req/s_log</span></div></div>\
+      <div class="flow-step"><b>3</b><div><strong>MDM</strong> — «золотой профиль» · SOAP · <span class="mono">mdm_res_log</span></div></div>\
+      <div class="flow-step"><b>4</b><div><strong>CD</strong> — кредитное досье · Kafka <span class="mono">SPRRB_REQCD</span>/<span class="mono">CDRB_RESCD</span> + Keycloak · async · <span class="mono">cd_req/s_log</span></div></div>\
+      <div class="flow-step"><b>5</b><div><strong>SM</strong> — PRH → PRB → PRV → POV · HTTP · <span class="mono">sm_req/res_log</span></div></div>\
+    </div>\
+    <h3>Внешние источники</h3>\
+    <div class="flow">\
+      <div class="flow-step"><b>6</b><div><strong>РИНТ (ExtInf)</strong> — БКИ, ОКБ, телеком · <span class="mono">extinf_req/s_log</span>, <span class="mono">service_availability</span></div></div>\
+      <div class="flow-step"><b>7</b><div><strong>ЦП</strong> — цифровой профиль · HTTP + Keycloak · <span class="mono">extinf_req/s_log</span></div></div>\
+      <div class="flow-step"><b>8</b><div><strong>СИМ</strong> — скоры моделей · Kafka · async · <span class="mono">extinf_req/s_log</span></div></div>\
+      <div class="flow-step"><b>9</b><div><strong>CredReg</strong> — кредитная история · MQ · async · <span class="mono">cr_req/s_log</span>, <span class="mono">cr_appdata_log</span></div></div>\
+      <div class="flow-step"><b>10</b><div><strong>IFPS</strong> (FPS, AFS, GS) — антифрод · IIB sync+callback · <span class="mono">ifps_req/s_log</span></div></div>\
+    </div>\
+    <h3>Выходы и нотификации</h3>\
+    <div class="flow">\
+      <div class="flow-step"><b>11</b><div><strong>Фронт</strong> — решение и статус · HTTPS · <span class="mono">rm_upt_log</span>, <span class="mono">rm_res_log</span></div></div>\
+      <div class="flow-step"><b>12</b><div><strong>CD</strong> — статус, CD Event, SBBS · Kafka + Keycloak · <span class="mono">cd_event_log</span>, <span class="mono">cd_sbbs_log</span>, <span class="mono">cd_appdata_log</span></div></div>\
+      <div class="flow-step"><b>13</b><div><strong>CredReg-BKI</strong> — БКИИнфо · MQ <span class="mono">SPR_INFORMCD</span></div></div>\
+      <div class="flow-step"><b>14</b><div><strong>RINT EORMDB → WSRM</strong> — события по заявкам · Kafka</div></div>\
+    </div>\
+    <div class="callout ok">Контакты по шагам — в реестре интеграций и на карте коммуникаций. Детальный разбор систем — Урок 2.</div>';
 
   html.tools = '\
     <h2>Инструменты ежедневной работы</h2>\
     <p class="lead">Алгоритм разбора + дашборды + готовые SQL.</p>\
     <ol>\
       <li>Добудь <span class="mono">request_id</span> (пустой requestId в Kibana = ошибка приложения, не заявки)</li>\
-      <li><strong>Kibana</strong> — <span class="mono">app-spr-kube*</span>, namespace <span class="mono">7frb-apps</span> (КОТ: <span class="mono">online-triggers-spring</span>)</li>\
+      <li><strong>Kibana</strong> — <span class="mono">app-spr-kube*</span>, namespace <span class="mono">7frb-apps</span></li>\
       <li><span class="mono">trace_id</span> → Grafana Tempo (dc1/dc2)</li>\
       <li>Дашборды Grafana (приоритетный — общебанковский spr-rb1)</li>\
       <li>БД: <span class="mono">rm_req_log / rm_res_log / rm_gen_log</span> и дальше по шагу</li>\
-      <li>Дефект → Jira SPRRB или KOTSPR («Дефект промсреды»)</li>\
+      <li>Дефект → Jira SPRRB («Дефект промсреды»)</li>\
     </ol>\
     <h3>Дашборды</h3>\
     <div class="links">\
@@ -309,7 +324,6 @@
       <a href="https://grafana.spr-dc1.alfaintra.net/d/9e4b0b4a-21db-4f8e-a6f3-5cbc8998194b/spr-rb1" target="_blank" rel="noopener">Grafana dc1</a>\
       <a href="https://grafana.spr-dc2.alfaintra.net/d/9e4b0b4a-21db-4f8e-a6f3-5cbc8998194b/spr-rb1" target="_blank" rel="noopener">Grafana dc2</a>\
       <a href="http://utekcrm/grafana/d/Na4LEe3Nk/spr-rb1?orgId=9" target="_blank" rel="noopener">Наша РБ1</a>\
-      <a href="http://utekcrm/grafana/d/Gk3cudmNz/spr-kot?orgId=9" target="_blank" rel="noopener">Наша КОТ</a>\
     </div>\
     <h3>Скрипты дежурства (шпаргалка)</h3>\
     <ul>\
@@ -328,7 +342,7 @@
       <tr><td><span class="mono">cd_res_log</span></td><td>TIMEOUT / KAFKATIMEOUT</td></tr>\
       <tr><td><span class="mono">sim_res_log</span> / <span class="mono">digprof_res_log</span></td><td>WS_ERROR / WS_TIMEOUT</td></tr>\
     </table>\
-    <div class="callout info">Эскалация по критичному: Таразанов А. (+7 985 545-48-89). DevOps: risk_support_devops@alfabank.ru. Runbook-страница заведена, но пока пустая.</div>\
+    <div class="callout info">Своя эскалация — по цепочке «Команда СПР РБ» (карта коммуникаций). DevOps: Ананьев Д. Д., Банаев А. Н. Runbook-страница заведена, но пока пустая.</div>\
     <div class="links">\
       <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2548964951" target="_blank" rel="noopener">Мониторинг</a>\
       <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3303104621" target="_blank" rel="noopener">Скрипты СПР РБ1</a>\
@@ -340,24 +354,26 @@
     <h2>Практика · 20 минут</h2>\
     <p class="lead">Прогони чек-лист как перед первой сменой.</p>\
     <ol>\
-      <li>Открой <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2842937663" target="_blank" rel="noopener">СПР РБ1</a> и <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1196788570" target="_blank" rel="noopener">страницу эскалации</a> — в избранное</li>\
+      <li>Открой <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2842937663" target="_blank" rel="noopener">СПР РБ1</a> — в избранное</li>\
+      <li>Выучи цепочку «Команда СПР РБ»: ФС → DevOps → Развитие → Риск-технологи</li>\
+      <li>По карте взаимодействий назови шаги 1, 5, 11 и таблицы логов</li>\
       <li>В pgAdmin: SELECT из <span class="mono">rbprimary.rm_res_log</span> за 5 минут</li>\
       <li>В Kibana: namespace <span class="mono">7frb-apps</span> — логи видны</li>\
       <li>Открой Grafana «наша РБ1» и общебанковский spr-rb1</li>\
-      <li>В Jira SPRRB проверь, что есть тип «Дефект промсреды»</li>\
-      <li>Возьми учебный <span class="mono">request_id</span> / <span class="mono">app_id</span> → найди в <span class="mono">rm_gen_log</span> или Kibana</li>\
-      <li>Напиши наставнику: «Урок 1 v2: доступы РБ N/6, КОТ M/9, блокеры: …»</li>\
+      <li>В Jira SPRRB проверь тип «Дефект промсреды»</li>\
+      <li>Учебный <span class="mono">request_id</span> → найди в <span class="mono">rm_gen_log</span> или Kibana</li>\
+      <li>Напиши наставнику: «Урок 1: доступы N/6, блокеры: …»</li>\
     </ol>\
-    <div class="callout">Критерий «пройден»: объясняешь СПР РБ1 за минуту, знаешь CREDITRM vs DATAFLOW, помнишь PRH–POV, проверил обязательные доступы РБ1, находишь заявку по request_id.</div>';
+    <div class="callout">Критерий «пройден»: объясняешь СПР РБ1 за минуту, знаешь команду СПР РБ, путь 1–14 по карте взаимодействий, проверил доступы РБ1, находишь заявку по request_id.</div>';
 
   html.quiz = '\
     <h2>Проверка знаний</h2>\
     <p class="lead">Минимум 4/5 — урок засчитан.</p>\
     <div class="quiz-q" data-q="0">\
-      <h4>1. Какой раздел Confluence — актуальный источник для ФС?</h4>\
-      <label><input type="radio" name="q0" value="0"/> Только DATAFLOW</label>\
-      <label><input type="radio" name="q0" value="1"/> CREDITRM (ОТЭКРМ): СПР РБ1 + страница эскалации</label>\
-      <label><input type="radio" name="q0" value="2"/> Только портал online-triggers-docs</label>\
+      <h4>1. Кто первая линия в «Команде СПР РБ»?</h4>\
+      <label><input type="radio" name="q0" value="0"/> Только риск-технологи</label>\
+      <label><input type="radio" name="q0" value="1"/> Функц. сопровождение: Марченко → Филиппов → Гриценко → Кочетков</label>\
+      <label><input type="radio" name="q0" value="2"/> Только INTKAFKA_SUPPORT</label>\
     </div>\
     <div class="quiz-q" data-q="1">\
       <h4>2. Что такое request_id?</h4>\
@@ -372,15 +388,15 @@
       <label><input type="radio" name="q2" value="2"/> Только MSSQL RiskUR</label>\
     </div>\
     <div class="quiz-q" data-q="3">\
-      <h4>4. Зачем нужен альт-режим?</h4>\
-      <label><input type="radio" name="q3" value="0"/> Чтобы ускорить скоринг в штатном режиме</label>\
-      <label><input type="radio" name="q3" value="1"/> При аварии источника — не копить очередь, временно не ходить в упавший сервис</label>\
-      <label><input type="radio" name="q3" value="2"/> Для деплоя без Jira</label>\
+      <h4>4. Что на шаге 5 карты взаимодействий?</h4>\
+      <label><input type="radio" name="q3" value="0"/> Только ответ во фронт</label>\
+      <label><input type="radio" name="q3" value="1"/> SM: этапы PRH → PRB → PRV → POV, лог sm_req/res_log</label>\
+      <label><input type="radio" name="q3" value="2"/> Только MQ в CredReg-BKI</label>\
     </div>\
     <div class="quiz-q" data-q="4">\
       <h4>5. Куда заводить дефект промсреды по РБ1?</h4>\
       <label><input type="radio" name="q4" value="0"/> Только Telegram</label>\
-      <label><input type="radio" name="q4" value="1"/> Jira SPRRB, тип «Дефект промсреды» (для КОТ — KOTSPR)</label>\
+      <label><input type="radio" name="q4" value="1"/> Jira SPRRB, тип «Дефект промсреды»</label>\
       <label><input type="radio" name="q4" value="2"/> Только RSKDEPLOY</label>\
     </div>\
     <div class="score" id="score"></div>';
@@ -398,14 +414,9 @@
     }
     return '\
       <h2>Основные доступы</h2>\
-      <p class="lead">Чек-лист из файла «Чек лист доступов СПР.xlsx». Отметь, что уже проверил.</p>\
-      <div class="callout warn">В чек-листе есть «как проверить», но нет «как запросить». Деплой-доступ — у DevOps (risk_support_devops@alfabank.ru).</div>\
-      <div class="tabs">\
-        <button type="button" class="on" data-tab="rb">СПР РБ (6)</button>\
-        <button type="button" data-tab="kot">КОТ СПР (9)</button>\
-      </div>\
-      <div class="pane on" id="pane-rb">' + rows(ACCESS_RB, "rb_") + '</div>\
-      <div class="pane" id="pane-kot">' + rows(ACCESS_KOT, "kot_") + '</div>\
+      <p class="lead">Чек-лист СПР РБ (без КОТ — его подключим отдельным уроком). Отметь, что уже проверил.</p>\
+      <div class="callout warn">В чек-листе есть «как проверить», но нет «как запросить». Деплой-доступ — у DevOps (Ананьев / Банаев).</div>\
+      <div id="checklist">' + rows(ACCESS_RB, "rb_") + '</div>\
       <div class="callout info" id="accessSummary"></div>';
   }
 
@@ -497,14 +508,14 @@
   function updateAccessSummary() {
     var el = document.getElementById("accessSummary");
     if (!el) return;
-    var rb = countChecks("rb_", 6), kot = countChecks("kot_", 9);
-    el.textContent = "РБ1: " + rb + "/6 · КОТ: " + kot + "/9. До дежурства закрой минимум: PG РБ1, ELK 7frb-apps, Grafana РБ1, Jira SPRRB.";
+    var rb = countChecks("rb_", 6);
+    el.textContent = "Отмечено: " + rb + "/6. До дежурства закрой минимум: PG РБ1, ELK 7frb-apps, Grafana РБ1, Jira SPRRB.";
   }
 
   function updateProgress() {
     var done = state.done || {};
     var n = sections.filter(function (s) { return done[s.id]; }).length;
-    var checks = 0, total = ACCESS_RB.length + ACCESS_KOT.length;
+    var checks = 0, total = ACCESS_RB.length;
     if (state.checks) for (var k in state.checks) if (state.checks[k]) checks++;
     var pct = Math.round((n / sections.length) * 75 + (checks / total) * 25);
     if (done.quiz) pct = Math.max(pct, 100);
