@@ -121,6 +121,134 @@
   .contact { padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
   .contact:last-child { border-bottom: 0; }
   .contact .role { color: var(--muted); font-size: 12px; }
+
+  .link-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 12px 0 18px; }
+  @media (max-width: 700px) { .link-grid { grid-template-columns: 1fr; } }
+  .link-card {
+    display: block; text-decoration: none; color: inherit;
+    border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+    background: linear-gradient(180deg, #fff, #F8FAFC);
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  .link-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(26,26,26,.08); border-color: #C9CED6; }
+  .link-card .tag {
+    display: inline-block; font-size: 10px; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 4px;
+  }
+  .link-card strong { display: block; font-size: 13px; margin-bottom: 2px; color: var(--ink); }
+  .link-card span.desc { font-size: 12px; color: var(--muted); }
+  .team-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 10px 0 14px; }
+  @media (max-width: 700px) { .team-grid { grid-template-columns: 1fr; } }
+  .team-card {
+    border: 1px solid #D6E4FF; border-radius: 12px; padding: 12px 14px;
+    background: linear-gradient(160deg, #F5F9FF, #fff);
+    border-top: 3px solid #0052CC;
+  }
+  .team-card h4 { margin: 0 0 4px; font-size: 13px; color: #0052CC; }
+  .team-card .sub { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+  .team-card ol { margin: 0; padding-left: 18px; font-size: 12.5px; }
+  .team-card li { margin-bottom: 3px; }
+  .duty-grid { display: grid; gap: 10px; margin: 12px 0; }
+  .duty {
+    display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start;
+    border: 1px solid var(--line); border-radius: 14px; padding: 14px;
+    background: #fff;
+  }
+  .duty .num {
+    width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: #fff; font-size: 15px;
+  }
+  .duty h4 { margin: 0 0 4px; font-size: 14px; }
+  .duty p { margin: 0; font-size: 13px; color: #3A4450; }
+  .d1 .num { background: #0052CC; }
+  .d2 .num { background: #FF8B00; }
+  .d3 .num { background: #00875A; }
+  .d4 .num { background: #6554C0; }
+  .d1 { border-left: 4px solid #0052CC; }
+  .d2 { border-left: 4px solid #FF8B00; }
+  .d3 { border-left: 4px solid #00875A; }
+  .d4 { border-left: 4px solid #6554C0; }
+  .imap {
+    border: 1px solid #D0D7E2; border-radius: 14px; overflow: hidden;
+    background: #F7F9FC; margin: 10px 0 14px;
+  }
+  .imap-legend {
+    display: flex; flex-wrap: wrap; gap: 12px; padding: 10px 12px;
+    background: #fff; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--muted);
+  }
+  .imap-legend i {
+    display: inline-block; width: 22px; height: 3px; vertical-align: middle; margin-right: 6px; border-radius: 2px;
+  }
+  .imap-legend .sync { background: #172B4D; }
+  .imap-legend .async { background: repeating-linear-gradient(90deg,#172B4D 0 4px, transparent 4px 7px); height: 2px; }
+  .imap-body {
+    display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px; padding: 10px;
+  }
+  @media (max-width: 900px) { .imap-body { grid-template-columns: 1fr; } }
+  .imap-col {
+    border-radius: 12px; padding: 10px; border: 1px solid transparent; min-height: 100px;
+  }
+  .imap-col.front { background: #E3FCEF; border-color: #ABF5D1; }
+  .imap-col.core { background: #DEEBFF; border-color: #B3D4FF; }
+  .imap-col.src { background: #FFF0B3; border-color: #FFE380; }
+  .imap-col h4 {
+    margin: 0 0 8px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  }
+  .imap-col.front h4 { color: #006644; }
+  .imap-col.core h4 { color: #0747A6; }
+  .imap-col.src h4 { color: #FF8B00; }
+  .imap-item {
+    background: #fff; border-radius: 10px; padding: 8px 9px; margin-bottom: 7px;
+    border: 1px solid rgba(0,0,0,.06); font-size: 12px; position: relative;
+  }
+  .imap-item .nm { font-weight: 700; font-size: 12.5px; }
+  .imap-item .meta { color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .imap-item .log {
+    display: inline-block; margin-top: 4px; font-family: Consolas, monospace; font-size: 10.5px;
+    background: #FFEBE6; color: #BF2600; padding: 1px 5px; border-radius: 4px;
+  }
+  .badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 18px; height: 18px; padding: 0 5px; border-radius: 99px;
+    background: #172B4D; color: #fff; font-size: 10px; font-weight: 800; margin-right: 5px;
+  }
+  .badge.g { background: #00875A; }
+  .badge.o { background: #FF8B00; }
+  .badge.r { background: #DE350B; }
+  .badge.b { background: #0052CC; }
+  .chan {
+    float: right; font-size: 10px; color: var(--muted); background: #F4F5F7;
+    border-radius: 4px; padding: 1px 5px; margin-left: 4px;
+  }
+  .imap-out {
+    margin: 0 10px 10px; border-radius: 12px; padding: 10px;
+    background: #FFEBE6; border: 1px solid #FFBDAD;
+  }
+  .imap-out h4 { margin: 0 0 8px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #BF2600; }
+  .out-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+  @media (max-width: 900px) { .out-grid { grid-template-columns: 1fr 1fr; } }
+  .imap-plat {
+    margin: 0 10px 10px; border-radius: 12px; padding: 10px;
+    background: #EAE6FF; border: 1px solid #C0B6F2;
+  }
+  .imap-plat h4 { margin: 0 0 6px; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #403294; }
+  .plat-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .plat-chip {
+    background: #fff; border: 1px solid #C0B6F2; border-radius: 8px;
+    padding: 5px 8px; font-size: 11px;
+  }
+  .imap-tip {
+    margin: 0 10px 10px; border-radius: 10px; padding: 10px 12px;
+    background: #FFFAE6; border: 1px solid #FFF0B3; font-size: 12px; color: #172B4D;
+  }
+  .prod-pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
+  .prod {
+    flex: 1 1 160px; border-radius: 12px; padding: 12px; border: 1px solid var(--line);
+    background: #fff;
+  }
+  .prod .pct { float: right; font-weight: 800; color: var(--alfa); }
+  .prod .nm { font-weight: 700; font-size: 13px; }
+  .prod .sys { font-size: 12px; color: var(--muted); margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -143,12 +271,12 @@
     <nav class="nav" id="nav" aria-label="Разделы урока"></nav>
     <main class="main" id="main"></main>
   </div>
-  <p class="footer-note">Урок 1 v3 · карта коммуникаций + карта взаимодействий · CREDITRM + DATAFLOW · прогресс в этом браузере</p>
+  <p class="footer-note">Урок 1 v4 · карта коммуникаций + карта взаимодействий · CREDITRM + DATAFLOW · прогресс в этом браузере</p>
 </div>
 
 <script>
 (function () {
-  var STORAGE_KEY = "spr_rb1_lesson1_v3";
+  var STORAGE_KEY = "spr_rb1_lesson1_v4";
   var state = load();
 
   var sections = [
@@ -176,54 +304,53 @@
 
   html.passport = '\
     <h2>Паспорт системы</h2>\
-    <p class="lead">СПР РБ1 — контур принятия решений по первичке розницы («7 полей»).</p>\
+    <p class="lead">СПР РБ1 — контур принятия решений по первичке розницы. Ниже — кто мы, какие продукты идут через нас, и ссылки, которые понадобятся по ходу урока.</p>\
     <div class="pillrow">\
       <span class="pill red">СПР РБ1</span>\
       <span class="pill">Первичка розницы</span>\
-      <span class="pill">CREDITRM = источник ФС</span>\
+      <span class="pill">Онбординг ФС</span>\
     </div>\
-    <div class="callout">Назначение: автоматизация рассмотрения кредитных заявок и расчёта первичных предложений. Цель — быстрее и прозрачнее менять алгоритмы, снижая кредитные и операционные риски.</div>\
-    <h3>Где искать правду</h3>\
-    <table>\
-      <tr><th>Пространство</th><th>Зачем</th></tr>\
-      <tr><td><strong>CREDITRM (ОТЭКРМ)</strong></td><td>Актуальный источник для ФС: контакты, маршрутизация, скрипты, эскалация</td></tr>\
-      <tr><td>DATAFLOW (Новая СПР)</td><td>ФТ, архитектура, бизнес-процесс, глоссарий</td></tr>\
-    </table>\
+    <div class="callout">Автоматизация рассмотрения кредитных заявок и расчёта первичных предложений: быстрее менять алгоритмы, меньше кредитных и операционных рисков.</div>\
     <h3>Маршрутизация продуктов</h3>\
-    <table>\
-      <tr><th>Продукт</th><th>Фронты / системы</th><th>Доля</th></tr>\
-      <tr><td>CCSA — кредитная карта</td><td>OCRM, ACRMNBA, RIBEYE, FEN_RIBEYE</td><td>100%</td></tr>\
-      <tr><td>AUTO — автокредит</td><td>FLECS, FENIX_AL</td><td>100%</td></tr>\
-      <tr><td>PILO — нецелевой КН</td><td>FENIX</td><td>5%</td></tr>\
-    </table>\
+    <div class="prod-pills">\
+      <div class="prod"><span class="pct">100%</span><div class="nm">CCSA · кредитная карта</div><div class="sys">OCRM · ACRMNBA · RIBEYE · FEN_RIBEYE</div></div>\
+      <div class="prod"><span class="pct">100%</span><div class="nm">AUTO · автокредит</div><div class="sys">FLECS · FENIX_AL</div></div>\
+      <div class="prod"><span class="pct">5%</span><div class="nm">PILO · нецелевой КН</div><div class="sys">FENIX</div></div>\
+    </div>\
     <h3>Команда СПР РБ</h3>\
-    <p style="color:#5C6570;font-size:13px;margin-top:-4px">Из карты коммуникаций — начинай отсюда при «своих» вопросах.</p>\
-    <table>\
-      <tr><th>Направление</th><th>Цепочка эскалации</th></tr>\
-      <tr><td><strong>Функц. сопровождение</strong><br/>1-я линия</td><td>① Марченко В. В. (эксперт) → ② Филиппов А. И. (техлид) → ③ Гриценко Д. А. (рук. напр.) → ④ Кочетков Е. А. (нач. отдела)</td></tr>\
-      <tr><td><strong>DevOps</strong><br/>стенды, БД, Redis</td><td>① Ананьев Д. Д. (эксперт) → ② Банаев А. Н. (техлид) → ③ Гриценко Д. А. → ④ Кочетков Е. А.</td></tr>\
-      <tr><td><strong>Развитие</strong><br/>доработки</td><td>① Пустовалов А. А. (разработчик), Тюляпкина В. С. (аналитик) → ② Староверов Д. М. (техлид) → ③ Чурсин С. В. (ИТ-лидер)</td></tr>\
-      <tr><td><strong>Риск-технологи</strong><br/>стратегии</td><td>① Золотухин Д. А., Немятых Н. Д., Киселёва К. В., Фастовский А. В. → ② Белобородова Е. А. (рук. напр.) → ③ Шиляев К. Н. (нач. отдела)</td></tr>\
-    </table>\
-    <div class="callout info">Контакты смежных систем (EQ, CD, SM, IFPS…) — на карте коммуникаций. Почта развития: spr-rbprimary-dev@alfaintra.net</div>\
-    <div class="links">\
-      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2842937663" target="_blank" rel="noopener">Корень ФС · СПР РБ1</a>\
-      <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1196788570" target="_blank" rel="noopener">СПР · рассылки и эскалация</a>\
-      <a href="https://online-triggers-docs.spr-dev.alfaintra.net/" target="_blank" rel="noopener">Портал развития</a>\
+    <p style="color:#5C6570;font-size:13px;margin-top:-4px">Из карты коммуникаций — начинай отсюда.</p>\
+    <div class="team-grid">\
+      <div class="team-card"><h4>Функц. сопровождение</h4><div class="sub">1-я линия</div><ol><li>Марченко В. В. — эксперт</li><li>Филиппов А. И. — техлид</li><li>Гриценко Д. А. — рук. напр.</li><li>Кочетков Е. А. — нач. отдела</li></ol></div>\
+      <div class="team-card"><h4>DevOps</h4><div class="sub">стенды, БД, Redis</div><ol><li>Ананьев Д. Д. — эксперт</li><li>Банаев А. Н. — техлид</li><li>Гриценко Д. А.</li><li>Кочетков Е. А.</li></ol></div>\
+      <div class="team-card"><h4>Развитие</h4><div class="sub">доработки</div><ol><li>Пустовалов А. А. — разработчик</li><li>Тюляпкина В. С. — аналитик</li><li>Староверов Д. М. — техлид</li><li>Чурсин С. В. — ИТ-лидер</li></ol></div>\
+      <div class="team-card"><h4>Риск-технологи</h4><div class="sub">стратегии</div><ol><li>Золотухин, Немятых, Киселёва, Фастовский</li><li>Белобородова Е. А. — рук. напр.</li><li>Шиляев К. Н. — нач. отдела</li></ol></div>\
+    </div>\
+    <div class="callout info">Контакты смежных систем — на карте коммуникаций. Почта развития: spr-rbprimary-dev@alfaintra.net</div>\
+    <h3>Полезные ссылки по ходу урока</h3>\
+    <div class="link-grid">\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2842937663" target="_blank" rel="noopener"><div class="tag">Старт</div><strong>СПР РБ1 — корень ФС</strong><span class="desc">Контакты, продукты, вход в раздел</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1196788570" target="_blank" rel="noopener"><div class="tag">Эскалация</div><strong>СПР · рассылки и документы</strong><span class="desc">Админ-гайды, FSD, эскалация</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2201317754" target="_blank" rel="noopener"><div class="tag">Ключ поиска</div><strong>Формирование request_id</strong><span class="desc">UUIDv7 — главный идентификатор заявки</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2190431267" target="_blank" rel="noopener"><div class="tag">Процесс</div><strong>Бизнес-процесс</strong><span class="desc">PRH → PRB → PRV → POV</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2548964951" target="_blank" rel="noopener"><div class="tag">Дежурство</div><strong>Мониторинг ошибок</strong><span class="desc">Kibana · Tempo · Grafana</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3303104621" target="_blank" rel="noopener"><div class="tag">SQL</div><strong>Скрипты СПР РБ1</strong><span class="desc">Готовые запросы для разбора</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2394156922" target="_blank" rel="noopener"><div class="tag">Ошибки</div><strong>Логирование ошибок</strong><span class="desc">Маркеры TIMEOUT / ERROR</span></a>\
+      <a class="link-card" href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3474393190" target="_blank" rel="noopener"><div class="tag">Среды</div><strong>Адреса СПР-РБ</strong><span class="desc">DEV / INT / LT / PROD</span></a>\
+      <a class="link-card" href="https://jira.moscow.alfaintra.net/browse/SPRRB" target="_blank" rel="noopener"><div class="tag">Тикеты</div><strong>Jira SPRRB</strong><span class="desc">Дефект промсреды</span></a>\
+      <a class="link-card" href="https://online-triggers-docs.spr-dev.alfaintra.net/" target="_blank" rel="noopener"><div class="tag">Портал</div><strong>Документация развития</strong><span class="desc">online-triggers-docs</span></a>\
     </div>';
 
   html.scope = '\
     <h2>Границы ответственности</h2>\
-    <p class="lead">Что закрывает СПР РБ1 и чего от неё не ждать.</p>\
-    <div class="callout ok"><strong>В зоне СПР РБ1:</strong> скоринг первички розницы («7 полей»); функционал, который забирается у WSRM/SBRM (распоряжения 3696.1, 5471.1). КОТ СПР — отдельная система, в этом уроке не разбираем.</div>\
-    <ul>\
-      <li>Приём заявки, <span class="mono">request_id</span>, прогон PRH→POV</li>\
-      <li>Оркестрация источников и отдача решения во фронт</li>\
-      <li>Логирование в БД СПР и первичная диагностика</li>\
-      <li>Эскалация по цепочке «Команда СПР РБ» и карте коммуникаций</li>\
-    </ul>\
-    <div class="callout warn">Явной таблицы «это не к нам» в Confluence нет. СПР РБ и СПР ММБ — разные контуры. Баги UI фронта — зона фронта; падение чужого сервиса — к владельцу, факт фиксируем у себя.</div>\
-    <div class="callout info">Раздел ФС уже заведён (Обзор, карты, интеграции, Runbook, Onboarding), но страницы пока пустые — этот урок как раз наполняет онбординг.</div>';
+    <p class="lead">За что отвечает функциональное сопровождение СПР РБ — коротко и по делу.</p>\
+    <div class="duty-grid">\
+      <div class="duty d1"><div class="num">1</div><div><h4>Жизненный цикл заявки внутри СПР</h4><p>Приём, <span class="mono">request_id</span>, этапы скоринга, решение: <strong>Accept / Decline / TechnicalError / Error</strong>.</p></div></div>\
+      <div class="duty d2"><div class="num">2</div><div><h4>Оркестрация источников</h4><p>Вызовы EQ, Credit Registry (БКИ), CD, СИМ, ЦП, GlobalSearch, AFS/IFPS, MDM — контроль таймаутов и ошибок (маркеры <span class="mono">WS_TIMEOUT</span>/<span class="mono">WS_ERROR</span>, <span class="mono">_SEND_TIMEOUT</span> и т.д.).</p></div></div>\
+      <div class="duty d3"><div class="num">3</div><div><h4>Логирование и первичная диагностика</h4><p>Таблицы БД (<span class="mono">rm_req_log</span>/<span class="mono">rm_res_log</span>/<span class="mono">rm_gen_log</span>, <span class="mono">ifps_res_log</span>, <span class="mono">cr_res_log</span>, <span class="mono">cd_res_log</span>…), Kibana (namespace <span class="mono">7frb-apps</span>), <span class="mono">trace_id</span> через Grafana Tempo, дашборды Grafana.</p></div></div>\
+      <div class="duty d4"><div class="num">4</div><div><h4>Эскалация</h4><p>По цепочке «Команда СПР РБ» и карте коммуникаций — сначала своя линия, потом смежные системы.</p></div></div>\
+    </div>\
+    <div class="callout warn"><strong>Важно:</strong> явной таблицы «это не к нам» в Confluence нет. СПР РБ и СПР ММБ — разные контуры. Баги UI фронта — зона фронта; падение чужого сервиса — к владельцу, факт фиксируем у себя в логах.</div>\
+    <div class="callout info">КОТ СПР — отдельная система, в этом уроке не разбираем.</div>';
 
   html.landscape = '\
     <h2>Ландшафт</h2>\
@@ -273,39 +400,65 @@
 
   html.flow = '\
     <h2>Путь заявки</h2>\
-    <p class="lead">По карте взаимодействий СПР РБ: типовой порядок шагов 1–14. Часть вызовов зависит от стратегии и типа заявки.</p>\
-    <div class="pillrow">\
-      <span class="pill">синхронно HTTP/SOAP</span>\
-      <span class="pill">асинхронно Kafka/MQ</span>\
-      <span class="pill red">Keycloak</span>\
+    <p class="lead">Карта взаимодействий СПР РБ — как заявка проходит систему. Нумерация типовая; часть шагов зависит от стратегии и типа заявки.</p>\
+    <div class="imap">\
+      <div class="imap-legend">\
+        <span><i class="sync"></i>синхронно (HTTP / SOAP)</span>\
+        <span><i class="async"></i>асинхронно (Kafka / MQ)</span>\
+        <span>🔑 Keycloak-токен</span>\
+      </div>\
+      <div class="imap-body">\
+        <div class="imap-col front">\
+          <h4>Фронты</h4>\
+          <div class="imap-item"><span class="badge g">1</span><span class="nm">ЕКК · Flecs · ЕМК · Fenix</span><span class="chan">HTTPS</span><div class="meta">Запрос на скоринг через WSRM</div><span class="log">rm_req_log</span></div>\
+          <div class="imap-item"><span class="badge g">1</span><span class="nm">OCRM</span><span class="chan">HTTPS</span><div class="meta">Вторичные предложения</div><span class="log">rm_req_log</span></div>\
+          <div class="imap-item" style="margin-top:14px;border-style:dashed"><div class="nm" style="color:#006644">↓ Результат</div><div class="meta">шаги 11–14 ниже</div></div>\
+        </div>\
+        <div class="imap-col core">\
+          <h4>СПР РБ · ядро</h4>\
+          <div class="imap-item"><span class="badge b">●</span><span class="nm">ApiFacade</span><div class="meta">Вход, Keycloak, присвоение <span class="mono">request_id</span></div></div>\
+          <div class="imap-item"><span class="badge b">●</span><span class="nm">Internal Kafka</span><div class="meta">Сигнал «старт скоринга»</div></div>\
+          <div class="imap-item"><span class="badge b">●</span><span class="nm">MainProcess</span><div class="meta">Оркестрация · стратегия Adviser</div></div>\
+          <div class="imap-item"><span class="badge b">●</span><span class="nm">ExtInf</span><div class="meta">Вызовы онлайн-источников</div></div>\
+          <div class="imap-item"><span class="nm">Keycloak-service · Utility</span><div class="meta">Токены / кэш · логирование</div></div>\
+          <div class="imap-item"><span class="nm">PostgreSQL · Redis</span><div class="meta">Логи, параметры · async↔sync</div></div>\
+        </div>\
+        <div class="imap-col src">\
+          <h4>Источники данных</h4>\
+          <div class="imap-item"><span class="badge o">2</span><span class="nm">EQ</span><span class="chan">SOAP</span><div class="meta">EQ_ID + ФИО</div><span class="log">svcusinf_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">3</span><span class="nm">MDM</span><span class="chan">SOAP</span><div class="meta">Золотой профиль</div><span class="log">mdm_res_log</span></div>\
+          <div class="imap-item"><span class="badge o">4</span><span class="nm">CD</span><span class="chan">Kafka 🔑</span><div class="meta">Кредитное досье</div><span class="log">cd_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">5</span><span class="nm">SM</span><span class="chan">HTTP</span><div class="meta">PRH→PRB→PRV→POV</div><span class="log">sm_req/res_log</span></div>\
+          <div class="imap-item"><span class="badge o">6</span><span class="nm">РИНТ / ExtInf</span><span class="chan">ExtInf</span><div class="meta">БКИ, ОКБ, телеком</div><span class="log">extinf_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">7</span><span class="nm">ЦП</span><span class="chan">HTTP 🔑</span><div class="meta">Цифровой профиль</div><span class="log">extinf_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">8</span><span class="nm">СИМ</span><span class="chan">Kafka</span><div class="meta">Скоры моделей</div><span class="log">extinf_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">9</span><span class="nm">CredReg</span><span class="chan">MQ</span><div class="meta">Кредитная история</div><span class="log">cr_req/s_log</span></div>\
+          <div class="imap-item"><span class="badge o">10</span><span class="nm">IFPS · FPS/AFS/GS</span><span class="chan">IIB</span><div class="meta">Антифрод + callback</div><span class="log">ifps_req/s_log</span></div>\
+        </div>\
+      </div>\
+      <div class="imap-out">\
+        <h4>Результат · шаги 11–14</h4>\
+        <div class="out-grid">\
+          <div class="imap-item"><span class="badge r">11</span><span class="nm">Ответ фронту</span><span class="chan">HTTPS</span><div class="meta">Решение + статус</div><span class="log">rm_upt_log · rm_res_log</span></div>\
+          <div class="imap-item"><span class="badge r">12</span><span class="nm">CD</span><span class="chan">Kafka 🔑</span><div class="meta">Статус, Event, SBBS</div><span class="log">cd_event_log</span></div>\
+          <div class="imap-item"><span class="badge r">13</span><span class="nm">CredReg-BKI</span><span class="chan">MQ</span><div class="meta">БКИИнфо</div><span class="log">SPR_INFORMCD</span></div>\
+          <div class="imap-item"><span class="badge r">14</span><span class="nm">RINT → WSRM</span><span class="chan">Kafka</span><div class="meta">События по заявкам</div></div>\
+        </div>\
+      </div>\
+      <div class="imap-plat">\
+        <h4>Платформа · если упало «у всех»</h4>\
+        <div class="plat-row">\
+          <span class="plat-chip"><strong>Kafka</strong> CD · СИМ · EORMDB</span>\
+          <span class="plat-chip"><strong>MQ</strong> CredReg</span>\
+          <span class="plat-chip"><strong>IIB</strong> IFPS / FPS / AFS / GS</span>\
+          <span class="plat-chip"><strong>Keycloak</strong> токены</span>\
+          <span class="plat-chip"><strong>PostgreSQL</strong> логи</span>\
+          <span class="plat-chip"><strong>Redis</strong> async↔sync</span>\
+        </div>\
+      </div>\
+      <div class="imap-tip"><strong>Как разбирать:</strong> 1) есть ли запись в <span class="mono">rm_req_log</span> → 2) на каком шаге остановились → 3) маркер TIMEOUT/ERROR → 4) эскалация по карте коммуникаций.</div>\
     </div>\
-    <h3>Вход</h3>\
-    <div class="flow">\
-      <div class="flow-step"><b>1</b><div><strong>Фронты → ApiFacade</strong><br/>ЕКК · Flecs · ЕМК · Fenix (WSRM) / OCRM · HTTPS + Keycloak · <span class="mono">rm_req_log</span> · присваивается <span class="mono">request_id</span></div></div>\
-    </div>\
-    <h3>Обогащение и стратегия</h3>\
-    <div class="flow">\
-      <div class="flow-step"><b>2</b><div><strong>EQ</strong> — EQ_ID + ФИО · SOAP · <span class="mono">svcusinf_req/s_log</span></div></div>\
-      <div class="flow-step"><b>3</b><div><strong>MDM</strong> — «золотой профиль» · SOAP · <span class="mono">mdm_res_log</span></div></div>\
-      <div class="flow-step"><b>4</b><div><strong>CD</strong> — кредитное досье · Kafka <span class="mono">SPRRB_REQCD</span>/<span class="mono">CDRB_RESCD</span> + Keycloak · async · <span class="mono">cd_req/s_log</span></div></div>\
-      <div class="flow-step"><b>5</b><div><strong>SM</strong> — PRH → PRB → PRV → POV · HTTP · <span class="mono">sm_req/res_log</span></div></div>\
-    </div>\
-    <h3>Внешние источники</h3>\
-    <div class="flow">\
-      <div class="flow-step"><b>6</b><div><strong>РИНТ (ExtInf)</strong> — БКИ, ОКБ, телеком · <span class="mono">extinf_req/s_log</span>, <span class="mono">service_availability</span></div></div>\
-      <div class="flow-step"><b>7</b><div><strong>ЦП</strong> — цифровой профиль · HTTP + Keycloak · <span class="mono">extinf_req/s_log</span></div></div>\
-      <div class="flow-step"><b>8</b><div><strong>СИМ</strong> — скоры моделей · Kafka · async · <span class="mono">extinf_req/s_log</span></div></div>\
-      <div class="flow-step"><b>9</b><div><strong>CredReg</strong> — кредитная история · MQ · async · <span class="mono">cr_req/s_log</span>, <span class="mono">cr_appdata_log</span></div></div>\
-      <div class="flow-step"><b>10</b><div><strong>IFPS</strong> (FPS, AFS, GS) — антифрод · IIB sync+callback · <span class="mono">ifps_req/s_log</span></div></div>\
-    </div>\
-    <h3>Выходы и нотификации</h3>\
-    <div class="flow">\
-      <div class="flow-step"><b>11</b><div><strong>Фронт</strong> — решение и статус · HTTPS · <span class="mono">rm_upt_log</span>, <span class="mono">rm_res_log</span></div></div>\
-      <div class="flow-step"><b>12</b><div><strong>CD</strong> — статус, CD Event, SBBS · Kafka + Keycloak · <span class="mono">cd_event_log</span>, <span class="mono">cd_sbbs_log</span>, <span class="mono">cd_appdata_log</span></div></div>\
-      <div class="flow-step"><b>13</b><div><strong>CredReg-BKI</strong> — БКИИнфо · MQ <span class="mono">SPR_INFORMCD</span></div></div>\
-      <div class="flow-step"><b>14</b><div><strong>RINT EORMDB → WSRM</strong> — события по заявкам · Kafka</div></div>\
-    </div>\
-    <div class="callout ok">Контакты по шагам — в реестре интеграций и на карте коммуникаций. Детальный разбор систем — Урок 2.</div>';
+    <div class="callout ok">Это учебная копия карты взаимодействий. Полная draw.io-версия — на странице Confluence ФС.</div>';
 
   html.tools = '\
     <h2>Инструменты ежедневной работы</h2>\
