@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Урок 1 — Введение в систему · СПР РБ</title>
+<style>
+  :root {
+    --alfa: #EF3124;
+    --alfa-dark: #C41A12;
+    --ink: #1A1A1A;
+    --muted: #5C6570;
+    --line: #E2E5EA;
+    --bg: #F3F5F7;
+    --card: #FFFFFF;
+    --ok: #1B7A4E;
+    --warn: #9A5B00;
+    --info: #0B5CAB;
+    --radius: 12px;
+    --shadow: 0 8px 28px rgba(26, 26, 26, .08);
+    --font: "Trebuchet MS", "Segoe UI", "Helvetica Neue", sans-serif;
+    --display: Cambria, "Times New Roman", serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 500px at 10% -10%, rgba(239,49,36,.10), transparent 55%),
+      radial-gradient(900px 400px at 100% 0%, rgba(11,92,171,.08), transparent 50%),
+      linear-gradient(180deg, #EEF1F4 0%, var(--bg) 40%, #EBEEF2 100%);
+    line-height: 1.45;
+  }
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 20px 16px 64px;
+  }
+  .hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #1A1A1A 0%, #2B3038 55%, #3A1512 100%);
+    color: #fff;
+    padding: 28px 28px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(239,49,36,.55), transparent 70%);
+    pointer-events: none;
+  }
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.72);
+    margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: -.02em;
+    position: relative;
+    z-index: 1;
+  }
+  .hero .brand {
+    color: #fff;
+    border-bottom: 3px solid var(--alfa);
+    padding-bottom: 2px;
+  }
+  .hero p {
+    margin: 0;
+    max-width: 62ch;
+    color: rgba(255,255,255,.82);
+    font-size: 15px;
+    position: relative;
+    z-index: 1;
+  }
+  .progress-box {
+    margin-top: 18px;
+    position: relative;
+    z-index: 1;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: rgba(255,255,255,.7);
+    margin-bottom: 6px;
+  }
+  .bar {
+    height: 8px;
+    background: rgba(255,255,255,.15);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .bar > span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--alfa), #FF7A70);
+    border-radius: 99px;
+    transition: width .35s ease;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  @media (max-width: 820px) {
+    .layout { grid-template-columns: 1fr; }
+    .nav { position: static !important; }
+  }
+  .nav {
+    position: sticky;
+    top: 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 12px;
+    box-shadow: var(--shadow);
+  }
+  .nav button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 2px;
+  }
+  .nav button:hover { background: #F6F7F9; color: var(--ink); }
+  .nav button.active {
+    background: rgba(239,49,36,.08);
+    color: var(--alfa-dark);
+    font-weight: 700;
+  }
+  .nav button .dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--line);
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .nav button.done .dot { background: var(--ok); }
+  .nav button.active .dot { background: var(--alfa); }
+  .main { min-width: 0; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px 22px 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    display: none;
+  }
+  .card.show { display: block; animation: in .28s ease; }
+  @keyframes in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
+  .card h2 {
+    font-family: var(--display);
+    font-size: 26px;
+    margin: 0 0 6px;
+    letter-spacing: -.02em;
+  }
+  .card .lead {
+    color: var(--muted);
+    margin: 0 0 16px;
+    font-size: 14px;
+  }
+  h3 {
+    font-size: 15px;
+    margin: 18px 0 8px;
+    letter-spacing: .01em;
+  }
+  p { margin: 0 0 10px; font-size: 14px; }
+  ul, ol { margin: 0 0 12px; padding-left: 18px; font-size: 14px; }
+  li { margin-bottom: 5px; }
+  a { color: var(--info); }
+  .pillrow { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
+  .pill {
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #F3F5F7;
+    border: 1px solid var(--line);
+    color: var(--muted);
+  }
+  .pill.red { background: rgba(239,49,36,.08); border-color: rgba(239,49,36,.25); color: var(--alfa-dark); }
+  .callout {
+    border-left: 4px solid var(--alfa);
+    background: #FFF8F7;
+    padding: 12px 14px;
+    border-radius: 0 10px 10px 0;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  .callout.info { border-color: var(--info); background: #F3F8FD; }
+  .callout.warn { border-color: var(--warn); background: #FFF8EC; }
+  .callout.ok { border-color: var(--ok); background: #F1FAF5; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 8px 0 14px;
+  }
+  th, td {
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: #F7F8FA; font-weight: 700; }
+  code, .mono {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12.5px;
+    background: #F3F5F7;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .flow {
+    display: grid;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .flow-step {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 10px;
+    align-items: start;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: linear-gradient(90deg, #FAFBFC, #fff);
+  }
+  .flow-step b {
+    display: inline-flex;
+    width: 28px; height: 28px;
+    align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--ink);
+    color: #fff;
+    font-size: 12px;
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  .btn {
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn.primary { background: var(--alfa); color: #fff; }
+  .btn.primary:hover { background: var(--alfa-dark); }
+  .btn.ghost { background: #fff; border: 1px solid var(--line); color: var(--ink); }
+  .btn.ghost:hover { background: #F6F7F9; }
+  .check-item {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .check-item:last-child { border-bottom: 0; }
+  .check-item input { width: 16px; height: 16px; margin-top: 2px; accent-color: var(--alfa); }
+  .check-item .meta { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .quiz-q {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+    background: #FAFBFC;
+  }
+  .quiz-q h4 { margin: 0 0 10px; font-size: 14px; }
+  .quiz-q label {
+    display: block;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+  .quiz-q label:hover { background: #fff; border-color: var(--line); }
+  .quiz-q label.correct {
+    background: #EAF7F0;
+    border-color: #B7E0C7;
+    color: var(--ok);
+  }
+  .quiz-q label.wrong {
+    background: #FDECEC;
+    border-color: #F5C2C0;
+    color: var(--alfa-dark);
+  }
+  .score {
+    display: none;
+    margin-top: 12px;
+    padding: 14px;
+    border-radius: 10px;
+    background: #1A1A1A;
+    color: #fff;
+    font-size: 14px;
+  }
+  .score.show { display: block; }
+  .links a {
+    display: inline-block;
+    margin: 0 8px 8px 0;
+    padding: 7px 10px;
+    border-radius: 8px;
+    background: #F3F5F7;
+    border: 1px solid var(--line);
+    text-decoration: none;
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .links a:hover { border-color: #C9CED6; }
+  .footer-note {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Онбординг · Урок 1 из 7</div>
+    <h1><span class="brand">СПР РБ</span> — Введение в систему</h1>
+    <p>За 30–40 минут: что это за система, где границы, как идёт заявка, чем пользоваться каждый день и какие доступы нужны до дежурства.</p>
+    <p style="margin-top:12px;position:relative;z-index:1">
+      <a href="./urok1_vvedenie_spr_rb.html" download="urok1_vvedenie_spr_rb.html"
+         style="display:inline-block;background:#EF3124;color:#fff;text-decoration:none;font-weight:700;font-size:13px;padding:10px 14px;border-radius:10px;margin-right:8px">Скачать HTML для Confluence</a>
+      <a href="./urok1_vvedenie_spr_rb_confluence.txt" download="urok1_vvedenie_spr_rb_confluence.txt"
+         style="display:inline-block;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;font-weight:700;font-size:13px;padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.25)">Скачать wiki-версию</a>
+    </p>
+    <div class="progress-box">
+      <div class="progress-meta">
+        <span>Прогресс урока</span>
+        <span id="pct">0%</span>
+      </div>
+      <div class="bar"><span id="bar"></span></div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="nav" id="nav" aria-label="Разделы урока"></nav>
+    <main class="main" id="main"></main>
+  </div>
+  <p class="footer-note">Интерактивный урок для макроса HTML в Confluence · данные из раздела DATAFLOW · сохраняет прогресс в этом браузере</p>
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = "spr_rb_lesson1_v1";
+  var state = load();
+
+  var sections = [
+    { id: "passport", title: "1. Паспорт" },
+    { id: "scope", title: "2. Границы" },
+    { id: "landscape", title: "3. Ландшафт" },
+    { id: "terms", title: "4. Понятия" },
+    { id: "flow", title: "5. Путь заявки" },
+    { id: "tools", title: "6. Инструменты" },
+    { id: "access", title: "7. Доступы" },
+    { id: "practice", title: "8. Практика" },
+    { id: "quiz", title: "9. Проверка" }
+  ];
+
+  var html = {
+    passport: '\
+      <h2>Паспорт системы</h2>\
+      <p class="lead">Система Принятия Решений — автоматизация рассмотрения кредитных заявок и расчёта первичных предложений.</p>\
+      <div class="pillrow">\
+        <span class="pill red">СПР РБ</span>\
+        <span class="pill">Первичка</span>\
+        <span class="pill">Вторичка / КОТ</span>\
+        <span class="pill">Kubernetes · Kafka · PostgreSQL</span>\
+      </div>\
+      <div class="callout">Бизнес-цель: повысить эффективность решений, снизить кредитные и операционные риски, ускорить и сделать прозрачнее изменения алгоритмов.</div>\
+      <h3>Happy path одной строкой</h3>\
+      <p>Ввод данных → JSON/XML → отправка в СПР → кредитный конвейер → решение: одобрение / отказ / запрос доп. информации.</p>\
+      <h3>С чего начать в Confluence</h3>\
+      <div class="links">\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1024235512" target="_blank" rel="noopener">Корень «Новая СПР»</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2137032204" target="_blank" rel="noopener">Общее описание</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1992867171" target="_blank" rel="noopener">FSD первичка</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1110131862" target="_blank" rel="noopener">FSD вторичка</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2344035671" target="_blank" rel="noopener">Рабочая группа / контакты</a>\
+      </div>\
+      <div class="callout info">Точки входа по команде: ИТ Риски — Бриченко Е. Ю.; ФС — Шабетник А., Кочетков Е.; фиксация встреч — Гурьянова Н. Д. Полный состав — на странице РГ.</div>',
+
+    scope: '\
+      <h2>Границы ответственности</h2>\
+      <p class="lead">Новичок должен отличать «чиним / эскалируем / это не к нам».</p>\
+      <h3>В зоне СПР</h3>\
+      <ul>\
+        <li>Приём заявки, <span class="mono">request_id</span>, прогон по этапам стратегии</li>\
+        <li>Оркестрация источников и расчёт решений (первичка / вторичка / триггеры — в рамках проектов СПР)</li>\
+        <li>Ответ во фронт и логирование в БД СПР</li>\
+        <li>Первичная диагностика и корректная эскалация</li>\
+      </ul>\
+      <h3>Важно</h3>\
+      <ul>\
+        <li>СПР РБ и СПР ММБ — разные контуры и рабочие группы</li>\
+        <li>Баги UI фронта — зона фронта; падение чужой системы — к её владельцу, но факт фиксируем у себя в логах</li>\
+        <li>Идёт переход с вендорского SmartWay на микросервисы внутренней разработки — в доках может быть «старое» и «новое» рядом</li>\
+      </ul>\
+      <div class="callout warn">Явной таблицы «это не к нам» в Confluence пока нет. Страница про разделение линий бизнеса помечена как контекст, не ADR.</div>',
+
+    landscape: '\
+      <h2>Ландшафт</h2>\
+      <p class="lead">Картина «кто с кем» — без детального разбора интеграций (это Урок 2).</p>\
+      <table>\
+        <tr><th>Слой</th><th>Что запомнить</th></tr>\
+        <tr><td>Вход</td><td><span class="mono">spr-retail-primary-risks-api-facade</span> — валидация + Keycloak</td></tr>\
+        <tr><td>Runtime</td><td>SmartWay Connect, Decision Agent (Advisor), ETL, БД СПР</td></tr>\
+        <tr><td>Авторизация</td><td>Keycloak; Utility кэширует токены для исходящих вызовов</td></tr>\
+        <tr><td>Фронты</td><td>ЕМК, ЕКК/FENIX, OCRM, FLECS, WSRM…</td></tr>\
+        <tr><td>Источники</td><td>EQ, MDM, CD, CR/БКИ, ExtInf, ЦП, СИМ, IFPS/AFS/GS… (~47+)</td></tr>\
+        <tr><td>Платформы</td><td>Kafka, MQ, IIB, K8s, PostgreSQL (<span class="mono">rbprimary</span>), Redis</td></tr>\
+      </table>\
+      <div class="links">\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3233635602" target="_blank" rel="noopener">ApiFacade</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2793568068" target="_blank" rel="noopener">Keycloak</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2481672922" target="_blank" rel="noopener">Таблица интеграций</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2517539526" target="_blank" rel="noopener">Текущее состояние</a>\
+      </div>',
+
+    terms: '\
+      <h2>Главные понятия</h2>\
+      <p class="lead">Без этих слов невозможно читать логи и эскалировать.</p>\
+      <table>\
+        <tr><th>Термин</th><th>Смысл для сопровождения</th></tr>\
+        <tr><td><span class="mono">request_id</span></td><td>Главный ID заявки (UUIDv7). Искать в БД и Kibana (<span class="mono">requestId</span>)</td></tr>\
+        <tr><td>ApiFacade</td><td>Входная точка расчёта заявки</td></tr>\
+        <tr><td>Keycloak</td><td>Межсистемная аутентификация; 401/403 — сюда</td></tr>\
+        <tr><td>PRH</td><td>Pre-Hunter: сбор внутренних данных до первого решения стратегии</td></tr>\
+        <tr><td>PRB</td><td>Чёрные списки (AFS, GS/IFPS) + стратегия</td></tr>\
+        <tr><td>PRV / POV</td><td>Обогащение по указанию стратегии; на POV — готовое решение</td></tr>\
+        <tr><td>ExtInf</td><td>Группа внешних источников; логи <span class="mono">extinfo_*</span></td></tr>\
+        <tr><td>CD / CR / EQ / СИМ / IFPS</td><td>Кредитное досье · шлюз БКИ · АБС · модели · антифрод</td></tr>\
+        <tr><td><span class="mono">rm_req_log</span></td><td>Вход заявки в БД СПР — часто первая проверка</td></tr>\
+      </table>\
+      <div class="links">\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2137032136" target="_blank" rel="noopener">Глоссарий</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2201317754" target="_blank" rel="noopener">Формирование request_id</a>\
+      </div>',
+
+    flow: '\
+      <h2>Путь заявки</h2>\
+      <p class="lead">Обзор бизнес-процесса. Детальные интеграции — в следующих уроках.</p>\
+      <div class="flow">\
+        <div class="flow-step"><b>1</b><div><strong>Фронт → ApiFacade</strong><br/>Валидация, Keycloak, создаётся <span class="mono">request_id</span></div></div>\
+        <div class="flow-step"><b>2</b><div><strong>Обогащение / GlobalSearch</strong><br/>В т.ч. безусловное обогащение для OCRM</div></div>\
+        <div class="flow-step"><b>3</b><div><strong>PRH → PRB → PRV → POV</strong><br/>Стратегия решает: отказать / одобрить / запросить источники / идти дальше</div></div>\
+        <div class="flow-step"><b>4</b><div><strong>Ответ во фронт</strong><br/>Шаг завершения + проверка бизнес-правил и обновление клиентской информации</div></div>\
+      </div>\
+      <div class="callout ok">Заявка «завершена», когда результат передан во фронт. Отдельного статуса «принята» в доках нет — фактически принятие = момент поступления.</div>\
+      <div class="callout info">При повторном вызове этапа стратегии должен уходить обновлённый блок <span class="mono">BRESULTS</span>.</div>\
+      <div class="links">\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2190431267" target="_blank" rel="noopener">Бизнес-процесс</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2237755222" target="_blank" rel="noopener">PRH</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2237755258" target="_blank" rel="noopener">PRB</a>\
+      </div>',
+
+    tools: '\
+      <h2>Инструменты ежедневной работы</h2>\
+      <p class="lead">Алгоритм разбора на первый месяц.</p>\
+      <ol>\
+        <li>Добудь <span class="mono">request_id</span></li>\
+        <li><strong>Kibana</strong> — namespace <span class="mono">7frb-apps</span>, поля timestamp / level / message / pod_name / requestId</li>\
+        <li>По <span class="mono">trace_id</span> — <strong>Grafana Tempo</strong> (dc1/dc2)</li>\
+        <li>Дашборды <strong>Grafana</strong> и алерты</li>\
+        <li>БД СПР: <span class="mono">rm_req_log / rm_res_log</span>, далее по шагу <span class="mono">cd_*</span>, <span class="mono">cr_*</span>, <span class="mono">extinfo_*</span>, <span class="mono">sm_*</span>, <span class="mono">ifps_*</span>, <span class="mono">sim_*</span></li>\
+      </ol>\
+      <h3>Маркеры ошибок</h3>\
+      <table>\
+        <tr><th>Таблица</th><th>Искать</th></tr>\
+        <tr><td><span class="mono">extinfo_res_log</span></td><td>WS_TIMEOUT / WS_ERROR / DB_ERROR</td></tr>\
+        <tr><td><span class="mono">ifps_res_log</span></td><td>GS_/AFS_/BLACKLIST_ … SEND_TIMEOUT/ERROR</td></tr>\
+        <tr><td><span class="mono">cr_res_log</span></td><td>CR_TIMEOUT / CR_ERROR</td></tr>\
+        <tr><td><span class="mono">cd_res_log</span></td><td>TIMEOUT / KAFKATIMEOUT</td></tr>\
+        <tr><td><span class="mono">sim_res_log</span></td><td>SIM_REQUEST_RESULT: WS_ERROR / WS_TIMEOUT</td></tr>\
+      </table>\
+      <h3>Среды</h3>\
+      <table>\
+        <tr><th>Среда</th><th>Статус</th><th>Зачем</th></tr>\
+        <tr><td>ДЕВ</td><td>неактивный</td><td>—</td></tr>\
+        <tr><td>ИНТ</td><td>активный (spr-int)</td><td>учёба и интеграция</td></tr>\
+        <tr><td>ПРЕЛАЙВ / НТ</td><td>заглушки</td><td>нагрузка / предпрод</td></tr>\
+        <tr><td>ПРОД</td><td>адресов в доке мало</td><td>только диагностика по регламенту</td></tr>\
+      </table>\
+      <div class="links">\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2548964951" target="_blank" rel="noopener">Мониторинг</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2394156922" target="_blank" rel="noopener">Логирование ошибок</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1999176520" target="_blank" rel="noopener">Модель данных</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3474393190" target="_blank" rel="noopener">Адреса сред</a>\
+        <a href="https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3828955377" target="_blank" rel="noopener">Стенды / сети</a>\
+      </div>',
+
+    access: accessHtml(),
+    practice: '\
+      <h2>Практика · 15 минут</h2>\
+      <p class="lead">Сделай по порядку и отметь у наставника.</p>\
+      <ol>\
+        <li>Открой корень СПР и добавь в избранное Confluence</li>\
+        <li>В бизнес-процессе найди этапы PRH…POV</li>\
+        <li>Проверь, открываются ли Kibana / Grafana (иначе — заявка на доступ)</li>\
+        <li>В разделе «Доступы» отметь: есть / запросил / блокатор</li>\
+        <li>Возьми учебный <span class="mono">request_id</span> и найди его в Kibana или <span class="mono">rm_req_log</span></li>\
+        <li>Напиши наставнику: «Урок 1: доступы N/16, блокеры: …»</li>\
+      </ol>\
+      <div class="callout">Критерий «урок пройден»: объясняешь СПР за минуту, помнишь PRH–POV, знаешь с чего искать по request_id, чеклист доступов заполнен.</div>',
+
+    quiz: quizHtml()
+  };
+
+  function accessHtml() {
+    var items = [
+      ["VPN + AD", "Базовый вход в контур банка"],
+      ["Confluence DATAFLOW", "Доки и этот курс"],
+      ["Чаты РГ СПР", "Оперативные вопросы"],
+      ["Jira / ITSM", "Тикеты и инциденты"],
+      ["PostgreSQL rbprimary (RO)", "Таблицы логов заявок"],
+      ["Клиент БД", "DBeaver / аналог"],
+      ["Kibana 7frb-apps", "WARN/ERROR по requestId"],
+      ["Grafana + Tempo", "Дашборды и trace_id"],
+      ["Алерты ELK/Prometheus", "Массовые сбои"],
+      ["Сеть INT (стенды)", "Учебный контур"],
+      ["Kafka UI (RO)", "Проверка топиков"],
+      ["Keycloak (RO)", "Диагностика 401/403"],
+      ["IBM MQ (RO)", "Очереди CredReg — по необходимости"],
+      ["IIB (RO)", "IFPS/AFS/GS — по необходимости"],
+      ["Просмотр заявки на фронте", "Сверка статуса"],
+      ["Почта / календарь", "Эскалации и встречи"]
+    ];
+    if (!state.checks) state.checks = {};
+    var rows = items.map(function (it, i) {
+      var id = "a" + i;
+      var checked = state.checks[id] ? " checked" : "";
+      return '<label class="check-item"><input type="checkbox" data-check="' + id + '"' + checked + '/><div><strong>' + it[0] + '</strong><div class="meta">' + it[1] + '</div></div></label>';
+    }).join("");
+    return '\
+      <h2>Основные доступы</h2>\
+      <p class="lead">Отметь, что уже есть. Прогресс сохраняется в браузере.</p>\
+      <div class="callout warn">Отдельной страницы «Доступы ФС» в DATAFLOW пока нет — этот чеклист можно позже вынести в Confluence как официальный.</div>\
+      <div id="checklist">' + rows + '</div>\
+      <div class="callout info" id="accessSummary"></div>';
+  }
+
+  function quizHtml() {
+    return '\
+      <h2>Проверка знаний</h2>\
+      <p class="lead">Выбери ответ и нажми «Проверить». Можно пересдавать.</p>\
+      <div class="quiz-q" data-q="0">\
+        <h4>1. Что такое request_id?</h4>\
+        <label><input type="radio" name="q0" value="0"/> Номер договора клиента в EQ</label>\
+        <label><input type="radio" name="q0" value="1"/> Уникальный ID заявки в СПР (UUIDv7), ключ поиска по логам</label>\
+        <label><input type="radio" name="q0" value="2"/> ID пода Kubernetes</label>\
+      </div>\
+      <div class="quiz-q" data-q="1">\
+        <h4>2. С чего начинать разбор при наличии request_id?</h4>\
+        <label><input type="radio" name="q1" value="0"/> Сразу писать во все чаты интеграций</label>\
+        <label><input type="radio" name="q1" value="1"/> Kibana / rm_req_log → затем Tempo и таблица по шагу</label>\
+        <label><input type="radio" name="q1" value="2"/> Только Grafana без логов</label>\
+      </div>\
+      <div class="quiz-q" data-q="2">\
+        <h4>3. Чем PRH отличается от PRV?</h4>\
+        <label><input type="radio" name="q2" value="0"/> Ничем, это синонимы</label>\
+        <label><input type="radio" name="q2" value="1"/> PRH — безусловное обогащение до стратегии; PRV — по указанию стратегии</label>\
+        <label><input type="radio" name="q2" value="2"/> PRH только для ММБ</label>\
+      </div>\
+      <div class="quiz-q" data-q="3">\
+        <h4>4. Когда заявка завершена в бизнес-процессе?</h4>\
+        <label><input type="radio" name="q3" value="0"/> Когда создан request_id</label>\
+        <label><input type="radio" name="q3" value="1"/> Когда результат передан во фронт</label>\
+        <label><input type="radio" name="q3" value="2"/> Когда открыт тикет</label>\
+      </div>\
+      <div class="quiz-q" data-q="4">\
+        <h4>5. ApiFacade в первую очередь делает…</h4>\
+        <label><input type="radio" name="q4" value="0"/> Скоринг в Spark</label>\
+        <label><input type="radio" name="q4" value="1"/> Валидацию входа и авторизацию по Keycloak</label>\
+        <label><input type="radio" name="q4" value="2"/> Загрузку ETL в ClickHouse</label>\
+      </div>\
+      <div class="score" id="score"></div>';
+  }
+
+  var answers = [1, 1, 1, 1, 1];
+
+  function load() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") || {};
+    } catch (e) {
+      return {};
+    }
+  }
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  function renderNav() {
+    var nav = document.getElementById("nav");
+    nav.innerHTML = sections.map(function (s) {
+      var done = (state.done || {})[s.id] ? " done" : "";
+      var active = state.current === s.id ? " active" : "";
+      return '<button type="button" class="' + done + active + '" data-go="' + s.id + '"><span class="dot"></span>' + s.title + "</button>";
+    }).join("");
+  }
+
+  function renderSection() {
+    var id = state.current || "passport";
+    state.current = id;
+    var main = document.getElementById("main");
+    main.innerHTML = '<section class="card show" id="card">' + html[id] + actionsHtml(id) + "</section>";
+    renderNav();
+    updateProgress();
+    updateAccessSummary();
+    bindCard();
+    save();
+  }
+
+  function actionsHtml(id) {
+    var idx = sections.findIndex(function (s) { return s.id === id; });
+    var prev = idx > 0 ? sections[idx - 1].id : null;
+    var next = idx < sections.length - 1 ? sections[idx + 1].id : null;
+    var buttons = "";
+    if (prev) buttons += '<button type="button" class="btn ghost" data-go="' + prev + '">← Назад</button>';
+    if (id === "quiz") {
+      buttons += '<button type="button" class="btn primary" id="checkQuiz">Проверить ответы</button>';
+    } else {
+      buttons += '<button type="button" class="btn primary" data-complete="' + id + '">' + (next ? "Далее →" : "Завершить") + "</button>";
+    }
+    if (next && id === "quiz") buttons += '<button type="button" class="btn ghost" data-go="' + next + '">Далее</button>';
+    return '<div class="actions">' + buttons + "</div>";
+  }
+
+  function bindCard() {
+    var card = document.getElementById("card");
+    card.querySelectorAll("[data-go]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        state.current = btn.getAttribute("data-go");
+        renderSection();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+    card.querySelectorAll("[data-complete]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var id = btn.getAttribute("data-complete");
+        state.done = state.done || {};
+        state.done[id] = true;
+        var idx = sections.findIndex(function (s) { return s.id === id; });
+        if (idx < sections.length - 1) state.current = sections[idx + 1].id;
+        renderSection();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+    card.querySelectorAll("[data-check]").forEach(function (box) {
+      box.addEventListener("change", function () {
+        state.checks = state.checks || {};
+        state.checks[box.getAttribute("data-check")] = box.checked;
+        save();
+        updateAccessSummary();
+        updateProgress();
+      });
+    });
+    var quizBtn = document.getElementById("checkQuiz");
+    if (quizBtn) quizBtn.addEventListener("click", checkQuiz);
+  }
+
+  function updateAccessSummary() {
+    var el = document.getElementById("accessSummary");
+    if (!el) return;
+    var total = 16, ok = 0;
+    for (var i = 0; i < total; i++) if (state.checks && state.checks["a" + i]) ok++;
+    el.textContent = "Отмечено доступов: " + ok + " из " + total + ". До дежурства закрой обязательные (VPN/AD, Confluence, чаты, БД или Kibana, Grafana, сеть INT).";
+  }
+
+  function updateProgress() {
+    var done = state.done || {};
+    var n = sections.filter(function (s) { return done[s.id]; }).length;
+    var accessBonus = 0;
+    if (state.checks) {
+      var c = 0;
+      for (var k in state.checks) if (state.checks[k]) c++;
+      accessBonus = Math.min(1, c / 8) * 0.15;
+    }
+    var pct = Math.round(((n / sections.length) * 0.85 + accessBonus) * 100);
+    if (done.quiz) pct = Math.max(pct, 100);
+    pct = Math.min(100, pct);
+    document.getElementById("pct").textContent = pct + "%";
+    document.getElementById("bar").style.width = pct + "%";
+  }
+
+  function checkQuiz() {
+    var score = 0;
+    document.querySelectorAll(".quiz-q").forEach(function (q) {
+      var qi = +q.getAttribute("data-q");
+      q.querySelectorAll("label").forEach(function (lab) {
+        lab.classList.remove("correct", "wrong");
+        var input = lab.querySelector("input");
+        var val = +input.value;
+        if (val === answers[qi]) lab.classList.add("correct");
+        if (input.checked && val !== answers[qi]) lab.classList.add("wrong");
+        if (input.checked && val === answers[qi]) score++;
+      });
+    });
+    var box = document.getElementById("score");
+    box.classList.add("show");
+    var pass = score >= 4;
+    box.innerHTML = pass
+      ? "<strong>Результат: " + score + "/5.</strong> Урок можно считать пройденным. Дальше — Урок 2. Интеграции."
+      : "<strong>Результат: " + score + "/5.</strong> Пройди разделы ещё раз и пересдай. Нужно минимум 4/5.";
+    if (pass) {
+      state.done = state.done || {};
+      state.done.quiz = true;
+      state.done.practice = true;
+      save();
+      updateProgress();
+      renderNav();
+    }
+  }
+
+  document.getElementById("nav").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-go]");
+    if (!btn) return;
+    state.current = btn.getAttribute("data-go");
+    renderSection();
+  });
+
+  if (!state.current) state.current = "passport";
+  renderSection();
+})();
+</script>
+</body>
+</html>
