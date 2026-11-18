@@ -1,254 +1,189 @@
-h1. Урок 1. Введение в систему
+h1. Урок 1. Введение в систему — СПР РБ1
 
-{info}Цель урока: за 30–40 минут понять, что такое СПР РБ, где её границы, как устроен путь заявки на верхнем уровне, какие инструменты нужны каждый день и какие доступы обязательны до дежурства.{info}
+{info}Цель: за 30–40 минут понять СПР РБ1 (первичка розницы + КОТ), границы, путь заявки, инструменты дежурства и проверить доступы по чек-листу ФС. Актуальный источник ФС — *CREDITRM*; ФТ/архитектура — *DATAFLOW*.{info}
 
 {toc:printable=true|style=disc|maxLevel=3|minLevel=2}
 
 ----
 
-h2. 1. Что такое СПР РБ
+h2. 1. Паспорт системы
 
 || | |
-|Полное название|Система Принятия Решений (СПР)|
-|Кратко|СПР РБ — контур принятия решений для розничного бизнеса|
-|Назначение|Автоматизация рассмотрения кредитных заявок и расчёта первичных предложений для клиентов розничного, а также малого и среднего бизнесов Банка|
-|Бизнес-цель|Повышение эффективности решений по кредитным заявкам: меньше кредитных и операционных рисков, быстрее и прозрачнее менять алгоритмы|
-|Типы заявок|Первичная · Вторичная (в т.ч. онлайн-триггеры / КОТ)|
-|Корень раздела|[Новая СПР|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1024235512]|
+|Полное название|Система Принятия Решений, контур РБ1 (первичка розницы)|
+|Кратко|СПР РБ1|
+|Назначение|Автоматизация рассмотрения кредитных заявок и расчёта первичных предложений|
+|Бизнес-цель|Эффективнее решения, меньше кредитных/операционных рисков, прозрачнее изменения алгоритмов|
+|Стек|SmartWay (PST), Pentaho, Jenkins, Kafka, Spark, AirFlow, PostgreSQL; k8s|
+|Корень ФС|[СПР РБ1|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2842937663]|
+|Эскалация / документы|[СПР|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1196788570]|
+|Портал|[online-triggers-docs|https://online-triggers-docs.spr-dev.alfaintra.net/]|
 
-{tip}Простыми словами: фронт присылает заявку → СПР обогащает данные, гоняет стратегию по этапам → возвращает решение (одобрение / отказ / запрос доп. информации) и параллельно обновляет смежные системы.{tip}
+*Где искать правду:*
+* *CREDITRM (ОТЭКРМ)* — актуальный источник для функционального сопровождения
+* *DATAFLOW (Новая СПР)* — ФТ, архитектура, бизнес-процесс, глоссарий
 
-*Стек (ориентир):* SmartWay (PST), Pentaho, Jenkins, Kafka, Apache Spark, AirFlow, PostgreSQL; масштабирование — Kubernetes.
+h3. Маршрутизация продуктов
 
-*Ключевые документы:*
-* [FSD СПР РБ первичка|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1992867171]
-* [FSD СПР РБ вторичка (v1.17)|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1110131862]
-* [БРД — Аудит требований СПР РБ|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2377557194]
-* [Общее описание системы|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2137032204]
+||Продукт||Системы||Доля||
+|CCSA (кредитная карта)|OCRM, ACRMNBA, RIBEYE, FEN_RIBEYE|100%|
+|AUTO (автокредит)|FLECS, FENIX_AL|100%|
+|PILO (нецелевой КН)|FENIX|5%|
+
+h3. Контакты (старт)
+
+||Роль||Кто||
+|Общая почта развития|[mailto:spr-rbprimary-dev@alfaintra.net]|
+|Аналитик СПР РБ1|Пустовалов Александр, [mailto:APUSTOVALOV@ALFABANK.RU], +7 919 814-26-61|
+|Техлидер разработки|Сазонтьев В. В., [mailto:VSazontyev@alfabank.ru]|
+|DevOps|[mailto:risk_support_devops@alfabank.ru] / OSSG_SPR — Ананьев Д., Банаев А.|
+|Эскалация критичного|Таразанов Александр, +7 985 545-48-89|
+|Kafka|INTKAFKA_SUPPORT — Новиков П., Чебыкин А.|
 
 ----
 
-h2. 2. Границы: что наше / что не наше
+h2. 2. Границы
 
-{panel:title=В зоне СПР|borderStyle=solid|borderColor=#0057B8|titleBGColor=#0057B8|titleColor=#FFFFFF}
-* Приём заявки от фронта, формирование {{request_id}}
-* Обогащение анкеты и оркестрация источников
-* Прогон стратегии по этапам PRH → PRB → PRV → POV
-* Расчёт скоринга первичного и вторичного контура, преодобрения, триггерные процессы (в рамках проектов СПР)
-* Отдача решения во фронт + логирование в БД СПР
-* Первичная диагностика инцидента и правильная эскалация
+{panel:title=В зоне СПР РБ1|borderStyle=solid|borderColor=#EF3124|titleBGColor=#EF3124|titleColor=#FFFFFF}
+Скоринг первички розницы («7 полей») + триггерный контур КОТ; функционал, переносимый с WSRM/SBRM. Приём заявки, request_id, PRH→POV, оркестрация источников, ответ фронту, логи, первичная диагностика и эскалация.
 {panel}
 
-{panel:title=Важно понимать|borderStyle=solid|borderColor=#B35C00|titleBGColor=#B35C00|titleColor=#FFFFFF}
-* СПР РБ и СПР ММБ — разные контуры/РГ (явной таблицы «это не к нам» в Confluence пока нет)
-* Баги UI фронта — зона фронта; недоступность чужой системы — эскалируем владельцу, но фиксируем у себя по логам
-* Страница «Разделение СПР на линии бизнеса» — *контекст для решения*, не ADR («Не читать как ADR»)
-* Идёт переход с вендорского SmartWay на микросервисную архитектуру внутренней разработки — в доках могут сосуществовать «старое» и «новое»
-{panel}
-
-*Проекты (ориентир):*
-* PJ05014-RB21 — СПР нового поколения
-* PJ08041-RB24 — единая СПР первичка+вторичка
-* PJ08008-RB24 — кредитование по online-триггерам
+{warning}Явной таблицы «это не к нам» нет. СПР РБ ≠ СПР ММБ. UI фронта — не наша зона; падение чужого сервиса — к владельцу, факт фиксируем в логах СПР.{warning}
 
 ----
 
-h2. 3. Кто вокруг системы
+h2. 3. Ландшафт и среды
 
-h3. Команда (точки входа)
-||Группа||Кого знать на старте||
-|ИТ Риски|Бриченко Е. Ю. (ИТ-лидер), Федина А. (СТО риски)|
-|РТ|Рубанов А. Б.|
-|Архитектура|Дерендяев П., Чемисов С., Коновалов Д. А.|
-|Data-продукты|Тоцкий Д., Заболоцкий А.|
-|Инфраструктура ИТ|Соколов Г., Пакульнис А., Таразанов А., Жуков А.|
-|НТ|Вайзер А. М.|
-|ФС|Шабетник А., Кочетков Е.|
-|Фиксация встреч|Гурьянова Н. Д.|
+||Слой||Что||
+|Вход|{{spr-retail-primary-risks-api-facade}} + Keycloak|
+|Runtime|SmartWay Connect, Advisor, ETL, БД СПР ({{rbprimary}})|
+|Фронты|OCRM, ACRMNBA, RIBEYE, FEN_RIBEYE/FENIX, FLECS|
+|Источники|EQ, CR/БКИ, CD ({{SPRRB_REQCD}}), СИМ, MDM, GS, AFS, IFPS, СОПД, ЦП, РИНТ, MSSQL RiskUR|
+|Платформы|Keycloak, Kafka, IBM MQ, Kubernetes|
 
-Полный состав РГ: [Синхронизация рабочей группы СПР РБ|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2344035671]
+||Среда||ApiFacade||Статус||
+|ДЕВ|spr-dev…/secure/SPRRequest|Неактивный|
+|ИНТ|spr-int…/secure/SPRRequest|Активный|
+|ПРЕЛАЙВ/НТ|spr-lt1…/secure/SPRRequest|Активный (заглушки)|
+|ПРОД|URL в «Адресах» пуст; хосты из чек-листа|Боевой: {{spr-dc1-pg01:5434}} (РБ1), {{:5432}} (КОТ)|
 
-h3. Чаты
-* [Общая РГ СПР РБ|https://t.me/+Z6ctcww671U3OWFi]
-* Чаты аудита требований / данных / архитектуры — на странице РГ (сроки активности уточняй)
-
-h3. Ландшафт (запомнить с первого дня)
-||Слой||Что это||
-|Вход|{{spr-retail-primary-risks-api-facade}} — валидация сообщения + Keycloak, далее в основной контур|
-|Runtime|SmartWay Connect, Decision Agent (Advisor), Job Server, ETL (Pentaho / Spark+Airflow), БД СПР|
-|Авторизация|Keycloak; Utility — кэш токена для исходящих вызовов (FENIX, IFPS и др.)|
-|Фронты|ЕМК, ЕКК/FENIX, OCRM, FLECS, WSRM и др.|
-|Источники|EQ, MDM, CD (Kafka), CR/БКИ, ExtInf, ЦП, СИМ, IFPS/AFS/GS, IBM MQ… (~47+ интеграций)|
-|Платформы|Kafka, MQ, IIB, Kubernetes, PostgreSQL (схема {{rbprimary}}), Redis|
-
-Детали интеграций — *Урок 2*. Здесь достаточно картины «кто с кем».
+{note}Деплой: Jira [RSKDEPLOY|https://jira.moscow.alfaintra.net/browse/RSKDEPLOY] + [А-платформа|https://platform/projects/]. Доступ уточнять у DevOps. Отдельного регламента PROD нет.{note}
 
 ----
 
-h2. 4. Главные понятия
+h2. 4. Ключевые понятия
 
-||Термин||Смысл для сопровождения||
-|{{request_id}}|Главный ID заявки во всём процессе СПР. Формируется один раз в начале, формат *UUIDv7*. Искать в БД и в Kibana ({{requestId}})|
-|ApiFacade|Входная точка расчёта заявки|
-|Keycloak|Аутентификация/авторизация межсистемных вызовов; 401/403 — сначала сюда|
-|PRH (Pre-Hunter)|Сбор «бесплатных»/внутренних данных *до* первого решения стратегии|
-|PRB|Чёрные списки (AFS, GlobalSearch/IFPS) + стратегия|
-|PRV / POV|Дальнейшее обогащение *по указанию стратегии*; на POV стратегия отдаёт готовое решение|
-|ExtInf|Группа внешних/смежных источников; логи {{extinfo_req/res_log}}|
-|CD / КД|Кредитное досье|
-|CR / CredReg|Шлюз в БКИ и др. источники|
-|EQ|АБС Банка|
-|СИМ|Система исполнения моделей|
-|SM|Смарт-маршрутизатор (в глоссарии; не путать с этапами стратегии)|
-|IFPS|Integration Fraud Preventing System — антифрод-контур|
-|{{rm_req_log}} / {{rm_res_log}}|Вход/ответ по заявке в БД СПР — *с чего начинать разбор*|
-
-Полный глоссарий: [Термины|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2137032136] · [request_id|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2201317754]
+||Термин||Смысл||
+|{{request_id}}|Главный ID заявки, UUIDv7; в Kibana — {{requestId}}|
+|ApiFacade|Входная точка расчёта|
+|Keycloak|Межсистемная аутентификация|
+|PRH / PRB / PRV / POV|Этапы конвейера|
+|CD / CR / ExtInf / IFPS|Кредитное досье / шлюз БКИ / внешние источники / антифрод|
+|{{rm_req_log}} / {{rm_res_log}}|Вход / выход заявки|
+|Альт-режим|При аварии источника — не ходить в упавший сервис, очередь не растёт; вкл/выкл = полный цикл выкатки. [Страница|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3119524533]|
 
 ----
 
-h2. 5. Путь заявки за 1 минуту
+h2. 5. Путь заявки
 
-{code}
-Фронт → ApiFacade (+ Keycloak) → request_id
-     → обогащение / GlobalSearch
-     → PRH → (при необходимости) PRB → PRV → POV
-     → решение во фронт + логи в БД СПР
-{code}
-
-||Шаг||Что происходит||
-|0–1|Заявка пришла от фронта. Для OCRM — доп. обогащение; Connect → GlobalSearch|
-|2 PRH|Синхронное обогащение *без* указаний стратегии → решение стратегии (отказ / одобрить и выйти / доп. источники / дальше)|
-|3 PRB|Обогащение + AFS/GS → стратегия|
-|4 PRV|Обогащение *по указанию* стратегии|
-|5 POV|Стратегия передаёт готовое решение|
-|6|Результат во фронт + проверка бизнес-правил / обновление клиентской информации|
-
-*Заявка «принята»:* фактически в момент поступления от фронта (отдельного статуса «принята» в доках не зафиксировано).  
-*Заявка «завершена»:* шаг 6 — результат ушёл во фронт.
+# Фронт → ApiFacade (+ Keycloak) → {{request_id}}
+# Начальный этап: обогащение OCRM, GlobalSearch
+# PRH → PRB → PRV → POV (повторные вызовы с {{BRESULTS}})
+# Шаг 6: результат во фронт = завершение
 
 Схема: [Бизнес-процесс|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2190431267]
 
-{note}При повторном вызове этапа стратегии должен передаваться обновлённый блок {{BRESULTS}}.{note}
+----
+
+h2. 6. Инструменты дежурства
+
+# {{request_id}} (пустой requestId в Kibana = ошибка приложения, не заявки)
+# Kibana: Data View {{app-spr-kube*}}, namespace {{7frb-apps}} (КОТ: {{online-triggers-spring}})
+# Tempo по {{trace_id}} → Grafana
+# SQL из [Скрипты СПР РБ1|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3303104621]
+# Дефект: [SPRRB|https://jira.moscow.alfaintra.net/browse/SPRRB] или [KOTSPR|https://jira.moscow.alfaintra.net/browse/KOTSPR], тип «Дефект промсреды»
+
+*Дашборды:*
+* [★ Общебанк. spr-rb1|http://grafana-uis/d/int-rb-primary/spr-rb1?orgId=1]
+* [Grafana dc1|https://grafana.spr-dc1.alfaintra.net/d/9e4b0b4a-21db-4f8e-a6f3-5cbc8998194b/spr-rb1]
+* [Наша РБ1|http://utekcrm/grafana/d/Na4LEe3Nk/spr-rb1?orgId=9]
+* [Наша КОТ|http://utekcrm/grafana/d/Gk3cudmNz/spr-kot?orgId=9]
+
+*Маркеры:* {{extinfo_res_log}} WS_*; {{ifps_res_log}} GS_/AFS_/…; {{cr_res_log}} CR_*; {{cd_res_log}} TIMEOUT/KAFKATIMEOUT; {{digprof_res_log}} WS_ERROR/TIMEOUT.  
+Подробнее: [Мониторинг|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2548964951] · [Логирование ошибок|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2394156922]
 
 ----
 
-h2. 6. Среды
+h2. 7. Чеклист доступов (из xlsx)
 
-||Среда||Статус в доках||Зачем новичку||
-|ДЕВ|неактивный|обычно не опираемся|
-|ИНТ|активный (api-facade spr-int)|основная учебная/интеграционная среда|
-|ПРЕЛАЙВ / НТ|заглушки|нагрузочные/предпрод сценарии|
-|ПРОД|на странице адресов — пусто|боевой контур; изменения — только по регламенту команды|
+{warning}В файле есть «как проверить», нет «как запросить». Деплой — у DevOps.{warning}
 
-*БД:* PostgreSQL, схема {{rbprimary}}.  
-*Стенды / сети:* [Адреса СПР-РБ|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3474393190] · [Стенды|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3828955377]
+h3. СПР РБ
 
-{warning}Отдельной страницы «правила работы с PROD» в Confluence *не найдено*. До появления регламента: на проде только диагностика (read-only), любые изменения — через согласованный процесс команды ФС/DevOps.{warning}
+||№||Доступ||Как проверить||Статус||
+|1|PostgreSQL РБ1|{{spr-dc1-pg01:5434}}, УЗ U_**** → {{SELECT * FROM rbprimary.rm_res_log WHERE evtime >= NOW() - INTERVAL '5 minutes'}}|☐|
+|2|ELK|http://a/kibana-prod · {{app-spr-kube*}} · {{kubernetes.namespace_name: '7frb-apps'}}|☐|
+|3|Графана наша|http://utekcrm/grafana/d/Na4LEe3Nk/spr-rb1?orgId=9|☐|
+|4|Jira дефекты|[SPRRB|https://jira.moscow.alfaintra.net/browse/SPRRB] → Create → «Дефект промсреды»|☐|
+|5|Jira деплой|[RSKDEPLOY|https://jira.moscow.alfaintra.net/browse/RSKDEPLOY]|☐|
+|6|А-платформа|https://platform/projects/|☐|
 
-----
+h3. КОТ СПР
 
-h2. 7. Как разбирать заявку в первый месяц
-
-Алгоритм из мониторинга/логов:
-
-# Есть {{request_id}}? Если нет — сначала добудь его у фронта / из тикета.
-# *Kibana* — namespace {{7frb-apps}}, поля {{timestamp}} / {{level}} / {{message}} / {{pod_name}} / {{requestId}}; смотри WARN/ERROR.
-# По {{trace_id}} — *Grafana Tempo* (dc1/dc2).
-# Дашборды *Grafana* + алерты (ELK / Prometheus).
-# В БД СПР — {{rm_req_log}} / {{rm_res_log}}, далее по шагу: {{cd_*}}, {{cr_*}}, {{extinfo_*}}, {{sm_*}} / {{sm3_*}}, {{ifps_*}}, {{sim_*}} и др.
-
-Маркеры ошибок (шпаргалка):
-
-||Таблица||Что искать||
-|{{extinfo_res_log}}|{{WS_TIMEOUT}} / {{WS_ERROR}} / {{DB_ERROR}}|
-|{{ifps_res_log}}|{{GS_/AFS_/BLACKLIST_/RSSS_/RSAS_}} {{SEND_TIMEOUT}} / {{ERROR}}|
-|{{cr_res_log}}|{{CR_TIMEOUT}} / {{CR_ERROR}}|
-|{{cd_res_log}}|{{TIMEOUT}} / {{KAFKATIMEOUT}}|
-|{{sim_res_log}}|{{SIM_REQUEST_RESULT}}: {{WS_ERROR}} / {{WS_TIMEOUT}}|
-|{{digprof_res_log}}|{{WS_ERROR}} / {{WS_TIMEOUT}}|
-
-Источники: [Мониторинг|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2548964951] · [Логирование ошибок|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2394156922] · [Модель данных|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1999176520]
+||№||Доступ||Как проверить||Статус||
+|1|БД триггеров|{{spr-dc1-pg01:5432}} → {{SELECT COUNT(*) FROM public."TriggersEMK" …}}|☐|
+|2|ELK КОТ|namespace {{online-triggers-spring}}|☐|
+|3|Grafana СПР kuber-custom|namespace {{online-triggers-spring}}|☐|
+|4|Общебанк. Grafana Kafka|osmonit-app, cluster=spr_prod|☐|
+|5|MSSQL RiskUR|10.229.2.67:1433 riskmon · {{spr_checkstandby_log}}|☐|
+|6|Графана наша КОТ|http://utekcrm/grafana/d/Gk3cudmNz/spr-kot?orgId=9|☐|
+|7|Jira KOTSPR|тип «Дефект промсреды»|☐|
+|8|RSKDEPLOY|доска открывается|☐|
+|9|А-платформа|https://platform/projects/|☐|
 
 ----
 
-h2. 8. Основные доступы (чеклист)
+h2. 8. Практика
 
-{warning}Отдельной страницы «Доступы для ФС» в DATAFLOW *не найдено*. Ниже — рабочий чеклист онбординга: отметь статус и допиши ссылку на заявку у себя в команде. Это же — кандидаты в отдельную страницу Confluence (пробел базы знаний).{warning}
-
-||№||Категория||Ресурс||Зачем||Тип||Как получить / ссылка||Обязателен до дежурства||Статус||
-|1|Базовые|VPN + AD|вход в контур|—|уточнить у ФС/ИТ|да|☐|
-|2|Базовые|Почта / календарь|эскалации, встречи|—|корпоративно|да|☐|
-|3|Базовые|Confluence DATAFLOW|доки, этот курс|RO|[корень СПР|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1024235512]|да|☐|
-|4|Базовые|Jira / ITSM|тикеты|—|уточнить очередь СПР|да|☐|
-|5|Коммуникации|Чаты РГ СПР|оперативка|[Общая РГ|https://t.me/+Z6ctcww671U3OWFi]|да|☐|
-|6|Данные|PostgreSQL {{rbprimary}} (логи)|разбор заявки|RO|DevOps / ФС (уточнить)|да|☐|
-|7|Данные|Клиент БД (DBeaver и т.п.)|удобный просмотр|—|локально + доступы к БД|да|☐|
-|8|Логи|Kibana ({{7frb-apps}})|WARN/ERROR, {{requestId}}|RO|[Мониторинг|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2548964951] + заявка на доступ|да|☐|
-|9|Мониторинг|Grafana + Tempo|дашборды, {{trace_id}}|RO|там же|да|☐|
-|10|Мониторинг|Алерты ELK/Prometheus|массовые сбои|RO|ссылки на стр. мониторинга|желательно|☐|
-|11|Платформы|Kafka UI / топики CD, СИМ…|«ушло ли сообщение»|RO|уточнить (INTKAFKA / DevOps)|желательно|☐|
-|12|Платформы|IBM MQ|CredReg / очереди|RO|уточнить|по необходимости|☐|
-|13|Платформы|IIB|IFPS/AFS/GS|RO|уточнить|по необходимости|☐|
-|14|Платформы|Keycloak (realm СПР)|диагностика 401/403|RO|[Keycloak|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2793568068] + заявка|желательно|☐|
-|15|Сеть|Стенды INT / LT / PROD|[Стенды|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3828955377]|—|сетевые заявки|да (INT минимум)|☐|
-|16|Фронты|Просмотр статуса заявки (ЕМК/ЕКК/…)|сверить «у них» и «у нас»|RO|уточнить у владельцев фронтов|желательно|☐|
-
-Инфра-контакты (ориентир): Бондарский К., Бриченко Е., Таразанов А., Сидякин О.; НТ — Вайзер А. (стр. инфраструктуры РГ).
+# Избранное: СПР РБ1 + страница эскалации
+# PG: {{rm_res_log}} за 5 минут
+# Kibana: {{7frb-apps}}
+# Grafana РБ1 (наша + общебанковская)
+# Jira SPRRB — тип дефекта промсреды
+# Учебный {{request_id}} / {{app_id}} → {{rm_gen_log}} или Kibana
+# Отчёт наставнику: доступы РБ N/6, КОТ M/9, блокеры
 
 ----
 
-h2. 9. Практика (15 минут)
+h2. 9. Проверка знаний
 
-# Открой [корень СПР|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1024235512] и добавь в избранное.
-# Открой [Бизнес-процесс|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2190431267] — найди этапы PRH…POV.
-# Открой [Мониторинг|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2548964951] — убедись, что Kibana/Grafana открываются (или заведи заявку).
-# В чеклисте доступов отметь: *есть / запросил / блокатор*.
-# Возьми учебный {{request_id}} у наставника → найди его в Kibana *или* в {{rm_req_log}} (достаточно факта «нашёл»).
-# Напиши наставнику: «Урок 1: доступы N/16, блокеры: …».
-
-----
-
-h2. 10. Проверка знаний
-
-{expand:title=Вопрос 1. Что такое request_id и зачем он сопровождению?}
-Ответ: уникальный идентификатор заявки во всём процессе СПР (UUIDv7), создаётся в начале. По нему ищут логи в БД и Kibana — главный ключ разбора.
+{expand:title=1. Актуальный источник для ФС?}
+CREDITRM (ОТЭКРМ): страница СПР РБ1 + СПР (эскалация). DATAFLOW — ФТ/архитектура.
 {expand}
 
-{expand:title=Вопрос 2. С чего начинать разбор, если есть request_id?}
-Ответ: Kibana ({{7frb-apps}}, {{requestId}}) и/или {{rm_req_log}} → при ошибках Tempo по {{trace_id}} и нужная таблица логов по шагу.
+{expand:title=2. Что такое request_id?}
+Главный ID заявки в СПР, UUIDv7.
 {expand}
 
-{expand:title=Вопрос 3. Чем PRH отличается от PRV?}
-Ответ: PRH — обогащение *безусловно* (внутренние/«бесплатные» данные) до первого сильного решения стратегии. PRV — обогащение *по указанию* стратегии.
+{expand:title=3. Как проверить PG РБ1?}
+pgAdmin → spr-dc1-pg01:5434 → SELECT из rbprimary.rm_res_log за 5 минут.
 {expand}
 
-{expand:title=Вопрос 4. Когда заявка считается завершённой в бизнес-процессе?}
-Ответ: на шаге передачи результата во фронт-систему (шаг 6), плюс сопутствующие проверки/обновления.
+{expand:title=4. Зачем альт-режим?}
+При аварии источника не копить очередь — временно не ходить в упавший сервис.
 {expand}
 
-{expand:title=Вопрос 5. Какие 5 доступов обязательны до дежурства?}
-Ответ (минимум): Confluence DATAFLOW; чаты РГ; VPN/AD; Kibana и/или БД логов (RO); Grafana/мониторинг. Без поиска по {{request_id}} на смену не выходим.
+{expand:title=5. Куда дефект промсреды РБ1?}
+Jira SPRRB, тип «Дефект промсреды» (КОТ — KOTSPR).
 {expand}
 
 ----
 
-h2. 11. Критерий «урок пройден»
+h2. Критерий «урок пройден»
 
-* Можешь за 1 минуту объяснить, что делает СПР и чем заканчивается happy path
-* Называешь PRH/PRB/PRV/POV без шпаргалки
-* Знаешь, что искать в первую очередь: {{request_id}}, {{rm_req_log}}, Kibana
-* Чеклист доступов заполнен; блокеры эскалированы наставнику
-* Добавлены в избранное: корень раздела, бизнес-процесс, мониторинг, модель данных, РГ
+* Объясняешь СПР РБ1 за минуту
+* Знаешь CREDITRM vs DATAFLOW
+* Помнишь PRH–POV и {{request_id}}
+* Проверил обязательные доступы РБ1 (PG, ELK, Grafana, Jira)
+* Находишь заявку в логах
 
 *Дальше →* Урок 2. Интеграции
-
-----
-
-h2. 12. Пробелы базы знаний (для ФС — завести страницы)
-
-{info}Это не часть «теории для новичка», а твой бэклог как сопровождающего: закрытие этих дыр = сильный вклад в раздел.{info}
-* Страница *«Доступы ФС СПР РБ»* (как получить A–G)
-* Регламент дежурства / канал / шаблон эскалации
-* Правила работы с PROD
-* Актуальная карта коммуникаций + реестр интеграций (уже делали отдельно — встроить в онбординг)
