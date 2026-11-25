@@ -4,136 +4,163 @@
 <meta charset="UTF-8"/>
 <title>Карта этапов стратегии СПР РБ</title>
 <style>
-  :root {
-    --ink:#172B4D; --muted:#6B778C; --line:#DFE1E6; --bg:#F4F5F7;
-    --front:#00875A; --init:#0052CC; --prh:#0747A6; --prb:#FF8B00;
-    --prv:#FF5630; --pov:#6554C0; --skip:#0065FF; --loop:#DE350B;
+  :root{
+    --ink:#172B4D;--muted:#6B778C;--line:#DFE1E6;--bg:#F4F5F7;
+    --c1:#0052CC;--c2:#0747A6;--c3:#FF8B00;--c4:#FF5630;--c5:#6554C0;--c6:#00875A;
+    --skip:#0065FF;--loop:#DE350B;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);font-family:Helvetica,Arial,sans-serif;color:var(--ink)}
-  .page{width:1100px;margin:16px auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px 22px}
-  h1{font-size:22px;margin:0 0 4px}
-  .sub{font-size:12px;color:var(--muted);margin:0 0 12px}
-  .legend{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:11px;margin-bottom:16px;background:#FAFBFC}
-  .legend b{margin-right:4px}
-  .dot{display:inline-block;width:28px;height:3px;vertical-align:middle;margin-right:6px;background:var(--ink)}
-  .dot.skip{background:var(--skip);background:repeating-linear-gradient(90deg,var(--skip) 0 3px,transparent 3px 6px)}
-  .dot.loop{background:var(--loop);background:repeating-linear-gradient(90deg,var(--loop) 0 6px,transparent 6px 10px)}
+  .page{width:1100px;margin:16px auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 24px 18px}
+  h1{font-size:22px;margin:0 0 4px;letter-spacing:-.02em}
+  .sub{margin:0 0 12px;font-size:12px;color:var(--muted)}
+  .legend{display:flex;flex-wrap:wrap;gap:16px;align-items:center;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#FAFBFC;font-size:11px;margin-bottom:16px}
+  .lg{display:inline-flex;align-items:center;gap:6px}
+  .lg i{display:inline-block;width:26px;height:2px;background:var(--ink)}
+  .lg i.skip{background:repeating-linear-gradient(90deg,var(--skip) 0 2px,transparent 2px 5px)}
+  .lg i.loop{background:repeating-linear-gradient(90deg,var(--loop) 0 5px,transparent 5px 9px)}
 
-  .flow{position:relative;height:210px;margin:8px 0 10px}
-  .row{display:flex;align-items:center;gap:0;position:relative;z-index:2}
-  .start,.end{width:58px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;border:2px solid var(--front);background:#E3FCEF;color:var(--front);flex-shrink:0}
-  .end{border-width:3px;margin-left:10px}
-  .stage{width:148px;min-height:92px;border:2px solid;border-radius:10px;background:#fff;padding:8px 8px 8px 30px;position:relative;flex-shrink:0}
-  .stage .b{position:absolute;left:7px;top:9px;width:20px;height:20px;border-radius:50%;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
-  .stage .t{font-size:13px;font-weight:700;margin:0 0 2px}
-  .stage .d{font-size:10px;color:var(--muted);line-height:1.25;margin:0 0 4px}
-  .stage .l{font-size:10px;color:#BF2600;font-family:Consolas,monospace}
-  .s1{border-color:var(--init)}.s1 .b{background:var(--init)}
-  .s2{border-color:var(--prh)}.s2 .b{background:var(--prh)}
-  .s3{border-color:var(--prb)}.s3 .b{background:var(--prb)}
-  .s4{border-color:var(--prv)}.s4 .b{background:var(--prv)}
-  .s5{border-color:var(--pov)}.s5 .b{background:var(--pov)}
-  .s6{border-color:var(--front)}.s6 .b{background:var(--front)}
-  .arrow{width:18px;height:2px;background:var(--ink);position:relative;flex-shrink:0;margin:0 2px}
-  .arrow:after{content:"";position:absolute;right:-1px;top:-3px;border:4px solid transparent;border-left-color:var(--ink)}
-  .dia{width:16px;height:16px;background:#FAFBFC;border:1.5px solid #97A0AF;transform:rotate(45deg);flex-shrink:0;margin:0 3px}
+  .canvas{position:relative;height:300px;margin-bottom:6px}
+  .node{position:absolute}
+  .start,.end{
+    width:52px;height:34px;border-radius:50%;border:2px solid var(--c6);background:#E3FCEF;
+    color:var(--c6);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  }
+  .end{border-width:3px}
+  .stage{
+    width:140px;height:78px;border:2px solid;border-radius:10px;background:#fff;
+    padding:8px 8px 6px 28px;
+  }
+  .stage .b{
+    position:absolute;left:6px;top:8px;width:20px;height:20px;border-radius:50%;
+    color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;
+  }
+  .stage .t{font-size:12px;font-weight:700;margin:0 0 2px;line-height:1.15}
+  .stage .d{font-size:10px;color:var(--muted);line-height:1.2;margin:0 0 3px}
+  .stage .l{font-size:9px;color:#BF2600;font-family:Consolas,monospace}
+  .s1{border-color:var(--c1)}.s1 .b{background:var(--c1)}
+  .s2{border-color:var(--c2)}.s2 .b{background:var(--c2)}
+  .s3{border-color:var(--c3)}.s3 .b{background:var(--c3)}
+  .s4{border-color:var(--c4)}.s4 .b{background:var(--c4)}
+  .s5{border-color:var(--c5)}.s5 .b{background:var(--c5)}
+  .s6{border-color:var(--c6)}.s6 .b{background:var(--c6)}
+  .stage.s6{width:168px}
+  .dia{width:16px;height:16px;background:#fff;border:1.5px solid #97A0AF;transform:rotate(45deg)}
+  .cap{position:absolute;font-size:9px;color:var(--muted);text-align:center;width:72px}
 
-  .skip-lane{position:absolute;left:290px;right:180px;top:8px;height:28px;border-top:2px dotted var(--skip);border-right:2px dotted var(--skip);border-radius:0 10px 0 0;z-index:1}
-  .skip-lane span{position:absolute;top:-14px;left:40%;font-size:10px;color:var(--skip);background:#fff;padding:0 6px}
-  .out-wrap{display:flex;justify-content:flex-end;align-items:center;margin-top:28px;gap:8px;position:relative;z-index:2}
-  .loop-note{font-size:10px;color:var(--loop);margin:4px 0 12px}
-  .loop-note em{font-style:normal;border-bottom:1px dashed var(--loop)}
+  svg.wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+  .main{stroke:#172B4D;stroke-width:1.6;fill:none;marker-end:url(#arrow)}
+  .main0{stroke:#172B4D;stroke-width:1.6;fill:none}
+  .skip{stroke:var(--skip);stroke-width:1.4;fill:none;stroke-dasharray:1.5 3;marker-end:url(#arrowB)}
+  .loop{stroke:var(--loop);stroke-width:1.4;fill:none;stroke-dasharray:6 4;marker-end:url(#arrowR)}
+  .lbl{font-size:9px;fill:var(--skip)}
+  .lblR{font-size:9px;fill:var(--loop)}
 
-  .variants{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0 14px}
-  .v{border:1.5px solid;border-radius:10px;padding:10px;background:#FAFBFC;min-height:92px}
+  .variants{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0 12px}
+  .v{border:1.5px solid;border-radius:10px;padding:10px 12px;background:#fff;min-height:84px}
   .v .n{font-size:15px;font-weight:800;margin-bottom:4px}
-  .v .tt{font-size:11px;font-weight:700;margin-bottom:3px}
-  .v .dd{font-size:10px;color:var(--muted)}
+  .v .tt{font-size:11px;font-weight:700;margin-bottom:3px;line-height:1.2}
+  .v .dd{font-size:10px;color:var(--muted);line-height:1.25}
   .v1{border-color:var(--loop)}.v1 .n{color:var(--loop)}
-  .v2{border-color:var(--front)}.v2 .n{color:var(--front)}
-  .v3{border-color:var(--prb)}.v3 .n{color:var(--prb)}
+  .v2{border-color:var(--c6)}.v2 .n{color:var(--c6)}
+  .v3{border-color:var(--c3)}.v3 .n{color:var(--c3)}
   .v4{border-color:var(--skip)}.v4 .n{color:var(--skip)}
-  .v5{border-color:var(--init)}.v5 .n{color:var(--init)}
-
-  .duty{background:#DEEBFF;border:1px solid #B3D4FF;border-radius:8px;padding:10px 12px;font-size:12px;margin-bottom:14px}
+  .v5{border-color:var(--c1)}.v5 .n{color:var(--c1)}
+  .sec{font-size:13px;font-weight:700;margin:0 0 8px}
+  .duty{background:#DEEBFF;border:1px solid #B3D4FF;border-radius:8px;padding:10px 12px;font-size:12px}
   .duty b{color:#0747A6}
-  table{width:100%;border-collapse:collapse;font-size:11px}
-  th,td{border-top:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
-  th{color:var(--muted);font-weight:700;border-top:none}
-  .foot{font-size:10px;color:var(--muted);margin-top:8px}
-  .sec{font-size:13px;font-weight:700;margin:4px 0 8px}
+  .foot{font-size:10px;color:var(--muted);margin:10px 0 0}
 </style>
 </head>
 <body>
 <div class="page">
   <h1>Карта этапов стратегии СПР РБ</h1>
-  <p class="sub">Как заявка проходит этапы стратегии: PRH → PRB → PRV → POV · решение Accept/Decline или доп. источники · контакты — на карте коммуникаций</p>
+  <p class="sub">Основной ход · досрочный выход Accept/Decline · возвраты на этап</p>
 
   <div class="legend">
-    <span><b>Легенда</b></span>
-    <span><i class="dot"></i>основной ход</span>
-    <span><i class="dot skip"></i>досрочный выход (отказать / одобрить)</span>
-    <span><i class="dot loop"></i>возврат на этап / повтор</span>
-    <span>◆ решение стратегии</span>
-    <span>① номер шага</span>
+    <b>Легенда</b>
+    <span class="lg"><i></i>основной ход</span>
+    <span class="lg"><i class="skip"></i>досрочный выход</span>
+    <span class="lg"><i class="loop"></i>возврат / повтор</span>
+    <span>◇ решение стратегии</span>
+    <span>① шаг</span>
   </div>
 
-  <div class="flow">
-    <div class="skip-lane"><span>отказать / одобрить → шаг 6</span></div>
-    <div class="row">
-      <div class="start">Старт</div>
-      <div class="arrow"></div>
-      <div class="stage s1"><div class="b">1</div><div class="t">Начальный этап</div><div class="d">OCRM-обогащение<br/>GlobalSearch</div><div class="l">rm_req_log</div></div>
-      <div class="arrow"></div><div class="dia"></div><div class="arrow"></div>
-      <div class="stage s2"><div class="b">2</div><div class="t">PRH</div><div class="d">Pre-Hunter<br/>безусловное обогащение</div><div class="l">sm_req/res_log</div></div>
-      <div class="arrow"></div><div class="dia"></div><div class="arrow"></div>
-      <div class="stage s3"><div class="b">3</div><div class="t">PRB</div><div class="d">Чёрные списки<br/>AFS / GS / IFPS</div><div class="l">sm / ifps_*</div></div>
-      <div class="arrow"></div><div class="dia"></div><div class="arrow"></div>
-      <div class="stage s4"><div class="b">4</div><div class="t">PRV</div><div class="d">Обогащение<br/>по указанию стратегии</div><div class="l">sm_req/res_log</div></div>
-      <div class="arrow"></div><div class="dia"></div><div class="arrow"></div>
-      <div class="stage s5"><div class="b">5</div><div class="t">POV</div><div class="d">Готовое решение<br/>стратегии</div><div class="l">sm_req/res_log</div></div>
-    </div>
-    <div class="out-wrap">
-      <div style="font-size:10px;color:var(--muted);margin-right:auto;max-width:420px;line-height:1.35">
-        <span style="color:var(--loop)">возвраты:</span>
-        остаться на этапе · на PRB · на PRV · повтор POV · на предыдущий этап
-      </div>
-      <div class="stage s6"><div class="b">6</div><div class="t">Ответ фронту</div><div class="d">Accept / Decline / Error<br/>+ обновление статуса</div><div class="l">rm_upt_log · rm_res_log</div></div>
-      <div class="end">Конец</div>
-    </div>
+  <!--
+    Grid (px): start 24 | s1 92 | d1 244 | s2 274 | d2 426 | s3 456 | d3 608 | s4 638 | d4 790 | s5 820
+    CY = 40+39 = 79 for stages top at 40
+  -->
+  <div class="canvas">
+    <svg class="wires" viewBox="0 0 1052 300" preserveAspectRatio="xMinYMin meet">
+      <defs>
+        <marker id="arrow" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#172B4D"/></marker>
+        <marker id="arrowB" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#0065FF"/></marker>
+        <marker id="arrowR" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto"><path d="M0,0 L7,3.5 L0,7 Z" fill="#DE350B"/></marker>
+      </defs>
+      <!-- main: centers y=79 -->
+      <path class="main" d="M76 79 H92"/>
+      <path class="main0" d="M232 79 H244"/>
+      <path class="main" d="M260 79 H274"/>
+      <path class="main0" d="M414 79 H426"/>
+      <path class="main" d="M442 79 H456"/>
+      <path class="main0" d="M596 79 H608"/>
+      <path class="main" d="M624 79 H638"/>
+      <path class="main0" d="M778 79 H790"/>
+      <path class="main" d="M806 79 H820"/>
+      <!-- POV down to step 6 -->
+      <path class="main" d="M890 118 V188 H846 V204"/>
+      <path class="main" d="M980 243 H1000"/>
+      <!-- skip bus -->
+      <path class="skip" d="M434 79 V40 H762 V204"/>
+      <path class="skip" d="M616 79 V40"/>
+      <path class="skip" d="M798 79 V40"/>
+      <text class="lbl" x="540" y="34">отказать / одобрить</text>
+      <!-- loops -->
+      <path class="loop" d="M434 118 V150 H344 V118"/>
+      <text class="lblR" x="358" y="146">остаться</text>
+      <path class="loop" d="M798 118 V168 H526 V118"/>
+      <text class="lblR" x="630" y="164">на PRB</text>
+      <path class="loop" d="M790 118 V186 H708 V118"/>
+      <text class="lblR" x="720" y="182">на PRV</text>
+      <path class="loop" d="M960 55 H980 V95 H960"/>
+      <text class="lblR" x="982" y="78">повтор</text>
+    </svg>
+
+    <div class="node start" style="left:24px;top:62px">Старт</div>
+    <div class="cap" style="left:14px;top:102px">заявка от фронта</div>
+
+    <div class="node stage s1" style="left:92px;top:40px"><div class="b">1</div><div class="t">Начальный этап</div><div class="d">OCRM · GlobalSearch</div><div class="l">rm_req_log</div></div>
+    <div class="node dia" style="left:244px;top:71px"></div>
+
+    <div class="node stage s2" style="left:274px;top:40px"><div class="b">2</div><div class="t">PRH</div><div class="d">безусловное обогащение</div><div class="l">sm_req/res_log</div></div>
+    <div class="node dia" style="left:426px;top:71px"></div>
+
+    <div class="node stage s3" style="left:456px;top:40px"><div class="b">3</div><div class="t">PRB</div><div class="d">AFS / GS / IFPS</div><div class="l">sm · ifps_*</div></div>
+    <div class="node dia" style="left:608px;top:71px"></div>
+
+    <div class="node stage s4" style="left:638px;top:40px"><div class="b">4</div><div class="t">PRV</div><div class="d">по указанию стратегии</div><div class="l">sm_req/res_log</div></div>
+    <div class="node dia" style="left:790px;top:71px"></div>
+
+    <div class="node stage s5" style="left:820px;top:40px"><div class="b">5</div><div class="t">POV</div><div class="d">готовое решение</div><div class="l">sm_req/res_log</div></div>
+
+    <div class="node stage s6" style="left:720px;top:204px"><div class="b">6</div><div class="t">Ответ фронту</div><div class="d">Accept / Decline / Error</div><div class="l">rm_upt_log · rm_res_log</div></div>
+    <div class="node end" style="left:908px;top:226px">Конец</div>
   </div>
 
-  <div class="sec">Варианты решения стратегии на этапах PRH / PRB / PRV / POV</div>
+  <div class="sec">Варианты решения на этапах PRH / PRB / PRV / POV</div>
   <div class="variants">
-    <div class="v v1"><div class="n">①</div><div class="tt">Отказать</div><div class="dd">сразу на шаг 6 → Decline</div></div>
-    <div class="v v2"><div class="n">②</div><div class="tt">Одобрить и выйти</div><div class="dd">сразу на шаг 6 → Accept</div></div>
+    <div class="v v1"><div class="n">①</div><div class="tt">Отказать</div><div class="dd">сразу → шаг 6 · Decline</div></div>
+    <div class="v v2"><div class="n">②</div><div class="tt">Одобрить и выйти</div><div class="dd">сразу → шаг 6 · Accept</div></div>
     <div class="v v3"><div class="n">③</div><div class="tt">Доп. источники и остаться</div><div class="dd">повтор текущего этапа</div></div>
-    <div class="v v4"><div class="n">④</div><div class="tt">Доп. источники и перейти</div><div class="dd">на другой этап (PRB/PRV/POV)</div></div>
-    <div class="v v5"><div class="n">⑤</div><div class="tt">Дальше без доп. вызовов</div><div class="dd">следующий этап по основному ходу</div></div>
+    <div class="v v4"><div class="n">④</div><div class="tt">Доп. источники и перейти</div><div class="dd">на PRB / PRV / POV</div></div>
+    <div class="v v5"><div class="n">⑤</div><div class="tt">Дальше без доп. вызовов</div><div class="dd">следующий этап по ходу</div></div>
   </div>
 
   <div class="duty">
-    <b>Что смотреть на дежурстве:</b>
-    1) rm_req_log — заявка вошла ·
-    2) sm_req/res_log / rm_gen_log — этап PRH/PRB/PRV/POV ·
-    3) маркеры TIMEOUT/ERROR у источника ·
-    4) rm_res_log — ушло ли решение ·
-    5) эскалация — карта коммуникаций
+    <b>На дежурстве:</b>
+    rm_req_log (вход) → sm_req/res_log / rm_gen_log (этап) → маркеры TIMEOUT/ERROR → rm_res_log (решение ушло) → карта коммуникаций
   </div>
-
-  <div class="sec">Справка по шагам</div>
-  <table>
-    <tr><th>Шаг</th><th>Название</th><th>Что происходит</th><th>Переход</th></tr>
-    <tr><td><b style="color:var(--front)">0</b></td><td><b>Начало</b></td><td>Заявка поступила от фронт-системы</td><td>→ 1</td></tr>
-    <tr><td><b style="color:var(--init)">1</b></td><td><b>Начальный этап</b></td><td>Обогащение OCRM (если нужно); Connect → GlobalSearch</td><td>→ 2</td></tr>
-    <tr><td><b style="color:var(--prh)">2</b></td><td><b>PRH</b></td><td>Безусловное обогащение; стратегия: отказ / approve / доп.источники / дальше</td><td>→ 2, 3 или 6</td></tr>
-    <tr><td><b style="color:var(--prb)">3</b></td><td><b>PRB</b></td><td>Обогащение + AFS/GS/IFPS; те же варианты решения</td><td>→ 2, 3, 4 или 6</td></tr>
-    <tr><td><b style="color:var(--prv)">4</b></td><td><b>PRV</b></td><td>Обогащение по указанию стратегии</td><td>→ 2–5 или 6</td></tr>
-    <tr><td><b style="color:var(--pov)">5</b></td><td><b>POV</b></td><td>Стратегия передаёт готовое решение</td><td>→ 2–6</td></tr>
-    <tr><td><b style="color:var(--front)">6</b></td><td><b>Ответ фронту</b></td><td>Передача результата + бизнес-правила / обновление клиента</td><td>конец</td></tr>
-  </table>
-  <p class="foot">Нумерация — типовой порядок; возвраты и досрочный выход зависят от ответа стратегии и типа заявки · Для онбординга ФС СПР РБ</p>
+  <p class="foot">Возвраты и досрочный выход зависят от ответа стратегии и типа заявки</p>
 </div>
 </body>
 </html>
