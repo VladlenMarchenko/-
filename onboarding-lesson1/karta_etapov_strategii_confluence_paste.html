@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<title>Вставка в Confluence — после диаграммы</title>
+<style>
+  body{font-family:Arial,Helvetica,sans-serif;max-width:960px;margin:24px auto;padding:0 16px;color:#172B4D;line-height:1.4}
+  h2{font-size:18px;margin:28px 0 10px}
+  p,li{font-size:14px}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:8px 0 16px}
+  th,td{border:1px solid #DFE1E6;padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#F4F5F7;font-weight:700}
+  code{font-family:Consolas,monospace;background:#F4F5F7;padding:1px 4px;border-radius:3px;color:#BF2600}
+  .hint{background:#DEEBFF;border:1px solid #B3D4FF;border-radius:8px;padding:10px 12px;font-size:13px;margin-bottom:20px}
+  .note{color:#6B778C;font-size:13px;margin-top:-8px}
+</style>
+</head>
+<body>
+<div class="hint"><b>Как вставить:</b> выдели всё ниже этой синей плашки (Ctrl+A в блоке или мышкой) → Ctrl+C → в Confluence кликни под диаграммой → Ctrl+V.</div>
+
+<div id="paste">
+<h2>Справка по шагам</h2>
+<table>
+  <tr><th>Шаг</th><th>Название</th><th>Что происходит</th><th>Лог / куда смотреть</th><th>Куда дальше</th></tr>
+  <tr><td>0</td><td><b>Начало</b></td><td>Заявка поступила от фронт-системы</td><td>вход в контур СПР</td><td>→ 1</td></tr>
+  <tr><td>1</td><td><b>Начальный этап</b></td><td>Обогащение OCRM (если нужно); Connect → GlobalSearch</td><td><code>rm_req_log</code></td><td>→ 2</td></tr>
+  <tr><td>2</td><td><b>PRH (Pre-Hunter)</b></td><td>Безусловное обогащение; стратегия решает: отказ / approve / доп. источники / дальше</td><td><code>sm_req_log</code> / <code>sm_res_log</code></td><td>→ 2, 3 или 6</td></tr>
+  <tr><td>3</td><td><b>PRB</b></td><td>Обогащение + проверки AFS / GS / IFPS; те же варианты решения</td><td><code>sm_*</code> / <code>ifps_*</code></td><td>→ 2, 3, 4 или 6</td></tr>
+  <tr><td>4</td><td><b>PRV</b></td><td>Обогащение по указанию стратегии</td><td><code>sm_req_log</code> / <code>sm_res_log</code></td><td>→ 2–5 или 6</td></tr>
+  <tr><td>5</td><td><b>POV</b></td><td>Стратегия передаёт готовое решение</td><td><code>sm_req_log</code> / <code>sm_res_log</code></td><td>→ 2–6</td></tr>
+  <tr><td>6</td><td><b>Ответ фронту</b></td><td>Передача результата + бизнес-правила / обновление статуса клиента</td><td><code>rm_upt_log</code> / <code>rm_res_log</code></td><td>конец</td></tr>
+</table>
+<p class="note">Нумерация — типовой порядок. Возвраты и досрочный выход зависят от ответа стратегии и типа заявки.</p>
+
+<h2>Что может ответить стратегия (на PRH / PRB / PRV / POV)</h2>
+<table>
+  <tr><th>№</th><th>Решение</th><th>Что значит</th><th>Куда идём</th><th>Тип</th></tr>
+  <tr><td>1</td><td><b>Отказать</b></td><td>Decline сразу</td><td>шаг 6</td><td>досрочный выход</td></tr>
+  <tr><td>2</td><td><b>Одобрить и выйти</b></td><td>Accept сразу</td><td>шаг 6</td><td>досрочный выход</td></tr>
+  <tr><td>3</td><td><b>Доп. источники и остаться</b></td><td>Нужны ещё данные, этап повторяется</td><td>тот же этап (2 / 3 / 4 / 5)</td><td>возврат</td></tr>
+  <tr><td>4</td><td><b>Доп. источники и перейти</b></td><td>Нужны данные на другом этапе</td><td>PRB / PRV / POV</td><td>переход</td></tr>
+  <tr><td>5</td><td><b>Дальше без доп. вызовов</b></td><td>Данных достаточно</td><td>следующий этап по схеме</td><td>основной ход</td></tr>
+</table>
+
+<h2>Что смотреть на дежурстве</h2>
+<ol>
+  <li><code>rm_req_log</code> — заявка <b>вошла</b></li>
+  <li><code>sm_req_log</code> / <code>sm_res_log</code> / <code>rm_gen_log</code> — <b>на каком этапе</b> застряли (PRH/PRB/PRV/POV)</li>
+  <li>маркеры <code>TIMEOUT</code> / <code>ERROR</code> у источника данных</li>
+  <li><code>rm_res_log</code> — решение <b>ушло</b> фронту или нет</li>
+  <li>если виновата смежная система — карта коммуникаций (эскалация)</li>
+</ol>
+
+<h2>Типовые ситуации</h2>
+<table>
+  <tr><th>Симптом</th><th>Где смотреть</th><th>Что проверить</th></tr>
+  <tr><td>Заявка «висит», фронт без ответа</td><td><code>rm_req_log</code> → <code>sm_*</code> → <code>rm_res_log</code></td><td>Дошла ли до SM? Есть ли ответ стратегии? Ушёл ли <code>rm_res_log</code>?</td></tr>
+  <tr><td>Ошибка на обогащении</td><td>лог этапа (PRH/PRB/PRV) + лог источника</td><td>TIMEOUT/ERROR у AFS/GS/IFPS/OCRM</td></tr>
+  <tr><td>Decline / Accept слишком рано</td><td>этап 2–5 + <code>rm_res_log</code></td><td>Досрочный выход стратегии — норма, если так ответила SM</td></tr>
+  <tr><td>Цикл / повтор этапа</td><td><code>sm_req_log</code> / <code>sm_res_log</code></td><td>Решение «остаться» или «перейти» — смотри next stage в ответе стратегии</td></tr>
+</table>
+</div>
+</body>
+</html>
