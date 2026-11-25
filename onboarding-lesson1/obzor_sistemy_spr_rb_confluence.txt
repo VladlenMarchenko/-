@@ -1,0 +1,137 @@
+h1. Обзор системы — СПР РБ1
+
+{info}Короткая точка входа для функционального сопровождения и новичков. Карты, runbook и доступы — на отдельных страницах; здесь только «что это, зачем, где границы и куда идти дальше».{info}
+
+{toc:printable=true|style=disc|maxLevel=3|minLevel=2}
+
+----
+
+h2. Что это
+
+*Полное название:* Система Принятия Решений, контур РБ1 (первичка розницы)  
+*Кратко:* СПР РБ1
+
+СПР РБ1 автоматизирует рассмотрение кредитных заявок и расчёт первичных предложений для клиентов розницы. Цель — быстрее и прозрачнее менять алгоритмы принятия решений, снижая кредитные и операционные риски.
+
+{tip}Простыми словами: фронт присылает заявку → СПР обогащает данные и прогоняет стратегию → возвращает решение и параллельно уведомляет смежные системы.{tip}
+
+*Корень раздела ФС:* [СПР РБ1|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2842937663]
+
+----
+
+h2. Назначение и границы
+
+h3. Что делает СПР
+* Принимает заявку от фронта, валидирует вход, проверяет токен Keycloak
+* Присваивает {{request_id}} (UUIDv7) — главный ключ поиска по логам
+* Оркестрирует источники и этапы стратегии
+* Отдаёт решение: *Accept / Decline / TechnicalError / Error*
+* Логирует ход заявки в БД СПР и отдаёт исходящие события (фронт, CD, БКИ, WSRM)
+
+h3. За что отвечает ФС СПР РБ
+# Жизненный цикл заявки внутри СПР: приём → {{request_id}} → этапы скоринга → решение
+# Оркестрация источников: EQ, Credit Registry (БКИ), CD, СИМ, ЦП, GlobalSearch, AFS/IFPS, MDM — контроль таймаутов и ошибок ({{WS_TIMEOUT}}/{{WS_ERROR}}, {{_SEND_TIMEOUT}} и т.д.)
+# Логирование и первичная диагностика: {{rm_req_log}}/{{rm_res_log}}/{{rm_gen_log}}, {{ifps_res_log}}, {{cr_res_log}}, {{cd_res_log}} и др.; Kibana ({{7frb-apps}}); {{trace_id}} через Grafana Tempo; дашборды Grafana
+# Эскалация по цепочке «Команда СПР РБ» и карте коммуникаций
+
+h3. Что не наша зона
+{warning}
+* Явной таблицы «это не к нам» в Confluence нет — ориентируйся на здравый смысл и карту коммуникаций
+* *СПР РБ* и *СПР ММБ* — разные контуры
+* Баги UI фронта — зона фронта
+* Падение чужого сервиса — к владельцу системы; факт ошибки фиксируем у себя в логах
+* *КОТ СПР* — отдельная система (не смешивать с обзором РБ1)
+{warning}
+
+----
+
+h2. Кто вокруг системы
+
+||Слой||Что запомнить||
+|Фронты|ЕКК · Flecs · ЕМК · Fenix (через WSRM) · OCRM|
+|Ядро СПР|ApiFacade · MainProcess · ExtInf · Keycloak-service / Utility · PostgreSQL ({{rbprimary}}) · Redis · internal Kafka|
+|Источники|EQ · MDM · CD · SM · РИНТ (ExtInf) · ЦП · СИМ · CredReg · IFPS (FPS/AFS/GS)|
+|Платформы|Keycloak · Kafka · IBM MQ · IIB · Kubernetes|
+
+Визуально: страница *«Карта взаимодействий»* (шаги 1–14).  
+Контакты: страница *«Карта коммуникаций»* / блок *«Команда СПР РБ»*.
+
+----
+
+h2. Продукты через СПР РБ1
+
+||Продукт||Фронты / системы||Доля||
+|CCSA — кредитная карта|OCRM, ACRMNBA, RIBEYE, FEN_RIBEYE|100%|
+|AUTO — автокредит|FLECS, FENIX_AL|100%|
+|PILO — нецелевой кредит наличными|FENIX|5%|
+
+----
+
+h2. Путь заявки за 30 секунд
+
+{code}
+Фронт → ApiFacade (+ Keycloak) → request_id
+      → EQ → MDM → CD → SM (PRH→PRB→PRV→POV)
+      → РИНТ / ЦП / СИМ / CredReg / IFPS
+      → ответ фронту + CD Event + CredReg-BKI + WSRM
+{code}
+
+||Блок||Шаги||Суть||
+|Вход|1|Фронт → ApiFacade, {{rm_req_log}}|
+|Обогащение и стратегия|2–5|EQ, MDM, CD, SM|
+|Внешние источники|6–10|РИНТ, ЦП, СИМ, CredReg, IFPS|
+|Выходы|11–14|Фронт, CD, CredReg-BKI, RINT→WSRM|
+
+Подробно: *Карта взаимодействий* + *Реестр интеграций*.
+
+----
+
+h2. Как разобрать заявку (шпаргалка ФС)
+
+# Возьми {{request_id}}
+# Проверь вход: {{rm_req_log}} / Kibana namespace {{7frb-apps}}
+# Найди шаг 1–14, на котором остановилась заявка
+# Посмотри маркер ошибки ({{TIMEOUT}} / {{ERROR}} и т.п.)
+# Эскалируй: сначала «Команда СПР РБ», затем владелец смежной системы по карте коммуникаций
+
+----
+
+h2. Команда СПР РБ (кратко)
+
+||Направление||1-я точка входа||
+|Функц. сопровождение|Марченко В. В.|
+|DevOps|Ананьев Д. Д., Банаев А. Н.|
+|Развитие|Пустовалов А. А., Тюляпкина В. С.|
+|Риск-технологи|Золотухин / Немятых / Киселёва / Фастовский|
+
+Полные цепочки эскалации — на *Карте коммуникаций*.  
+Почта развития: [mailto:spr-rbprimary-dev@alfaintra.net]
+
+----
+
+h2. Быстрые ссылки
+
+||Зачем||Куда||
+|Корень ФС|[СПР РБ1|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2842937663]|
+|Эскалация / документы|[СПР|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=1196788570]|
+|{{request_id}}|[Формирование request_id|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2201317754]|
+|Процесс|[Бизнес-процесс|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2190431267]|
+|Мониторинг|[Мониторинг ошибок|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2548964951]|
+|SQL дежурства|[Скрипты СПР РБ1|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3303104621]|
+|Маркеры ошибок|[Логирование ошибок|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=2394156922]|
+|Среды|[Адреса СПР-РБ|https://confluence.moscow.alfaintra.net/pages/viewpage.action?pageId=3474393190]|
+|Дефекты|[Jira SPRRB|https://jira.moscow.alfaintra.net/browse/SPRRB]|
+|Портал|[online-triggers-docs|https://online-triggers-docs.spr-dev.alfaintra.net/]|
+
+----
+
+h2. Дочерние страницы этого раздела
+
+* *Назначение и границы* — развёрнутый out-of-scope и смежные зоны
+* *Глоссарий* — {{request_id}}, ApiFacade, PRH/PRB/PRV/POV, ExtInf, CD, IFPS, альт-режим и др.
+
+{children:depth=1|sort=title}
+
+----
+
+{note}Статус: черновик обзора для онбординга ФС. Актуализируй ссылки на карты коммуникаций/взаимодействий после публикации их на Confluence.{note}
